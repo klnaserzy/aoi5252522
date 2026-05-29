@@ -4,17 +4,20 @@ import TimelineSection from '../components/TimelineSection.vue'
 
 <template>
   <div class="about-container">
-    <div class="profile-card">
-      <div class="avatar">🩸</div>
-      <div class="info">
-        <h2>Aoi Hinamori (阿歐依)</h2>
-        <p class="subtitle">個人勢虛擬YouTuber / 吸血鬼護士</p>
-        <p class="bio">
-          一位來自魔界、在人間開張特別診所的吸血鬼護士。為了讓前來就診的患者們充滿笑容而成為
-          VTuber，擅長趣味雜談、ASMR、搞怪企劃與遊戲實況。
-        </p>
+    <a href="https://x.com/AoiHinamori" target="_blank">
+      <div class="profile-card">
+        <div class="avatar">🩸</div>
+        <div class="info">
+          <h2>Aoi Hinamori (阿歐依)</h2>
+          <p class="subtitle">個人勢虛擬 VTuber / 吸血鬼護士</p>
+          <p class="bio">
+            一位來自魔界、在人間開張特別診所的吸血鬼護士。為了讓前來就診的患者們充滿笑容而成為
+            VTuber，擅長趣味雜談、ASMR、搞怪企劃與遊戲實況。
+          </p>
+          <div class="enter-btn">前往 X</div>
+        </div>
       </div>
-    </div>
+    </a>
 
     <div class="exhibit-intro">
       <h3>關於本次數位推文特展</h3>
@@ -48,7 +51,6 @@ import TimelineSection from '../components/TimelineSection.vue'
   background: rgba(255, 77, 109, 0.1);
   width: 80px;
   height: 80px;
-  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -68,6 +70,10 @@ import TimelineSection from '../components/TimelineSection.vue'
   margin: 0;
   font-size: 0.95rem;
 }
+.enter-btn {
+  text-align: right;
+  border-bottom: 1px solid var(--primary-color);
+}
 .exhibit-intro {
   margin-top: 2.5rem;
   border-left: 4px solid var(--primary-color);
@@ -78,5 +84,17 @@ import TimelineSection from '../components/TimelineSection.vue'
 .exhibit-intro h3 {
   color: #fff;
   margin-bottom: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .avatar {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+  }
+  .profile-card {
+    padding: 1.5rem;
+    flex-direction: column;
+  }
 }
 </style>

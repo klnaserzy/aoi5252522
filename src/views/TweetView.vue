@@ -31,23 +31,25 @@ const filteredItems = computed(() => {
 
     <div class="grid">
       <div v-for="item in filteredItems" :key="item.id" class="art-frame">
-        <a :href="item.url" target="_blank">
+        <a :href="item.url" target="_blank" class="frame-link">
           <div class="frame-top">
             <span class="author-tag">{{ item.authorHandle }}</span>
             <span class="type-icon">{{ item.type === 'artwork' ? '🎨 Art' : '💬 Post' }}</span>
           </div>
 
-          <div class="canvas" :class="item.type">
-            <div class="canvas-inner">
-              <p class="art-title">{{ item.title }}</p>
+          <div class="frame-content">
+            <div class="canvas" :class="item.type">
+              <div class="canvas-inner">
+                <p class="art-title">{{ item.title }}</p>
+              </div>
             </div>
-          </div>
 
-          <div class="frame-details">
-            <p class="desc">{{ item.description }}</p>
-            <div class="action-bar">
-              <span class="date">{{ item.date }}</span>
-              <span target="_blank" class="link-btn">查看推文 ↗</span>
+            <div class="frame-details">
+              <p class="desc">{{ item.description }}</p>
+              <div class="action-bar">
+                <span class="date">{{ item.date }}</span>
+                <span target="_blank" class="link-btn">查看推文 ↗</span>
+              </div>
             </div>
           </div>
         </a>
@@ -106,6 +108,13 @@ const filteredItems = computed(() => {
   transform: translateY(-4px);
   border-color: var(--primary-color);
 }
+.frame-link {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-decoration: none; /* 移除超連結下底線 */
+  color: inherit; /* 繼承原本文字顏色 */
+}
 .frame-top {
   display: flex;
   justify-content: space-between;
@@ -120,6 +129,11 @@ const filteredItems = computed(() => {
 .type-icon {
   color: var(--primary-color);
   font-weight: bold;
+}
+.frame-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 .canvas {
   height: 160px;

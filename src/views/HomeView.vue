@@ -2,20 +2,9 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useExhibitionStore } from '../stores/exhibition'
-import { useMockApi } from '@/stores/mockApi'
-import { postMockApi } from '@/utils/api'
 
 const router = useRouter()
 const store = useExhibitionStore()
-const { mockApiData } = useMockApi()
-
-postMockApi({
-  website: 'test',
-})
-
-setTimeout(() => {
-  console.log(mockApiData)
-}, 2000)
 
 const mainAnnouncement = computed(() => store.exhibits[0])
 </script>
@@ -30,7 +19,7 @@ const mainAnnouncement = computed(() => store.exhibits[0])
           歡迎光臨吸血鬼護士 Aoi Hinamori
           的虛擬展覽空間。此處收錄了本次活動的主視覺開幕推文，以及來自特邀繪師老師們帶來的絕美應援創作。
         </p>
-        <button @click="router.push('/tweet')" class="enter-btn">進入貼文觀展 ➔</button>
+        <button @click="router.push('/tweet')" class="enter-btn">前往查看貼文 ➔</button>
       </div>
     </section>
 
@@ -165,5 +154,16 @@ const mainAnnouncement = computed(() => store.exhibits[0])
 .x-link {
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .title {
+    padding-left: 0.5rem;
+    font-size: 2.4rem;
+  }
+  .title span {
+    display: block;
+    font-size: 2.2rem;
+  }
 }
 </style>

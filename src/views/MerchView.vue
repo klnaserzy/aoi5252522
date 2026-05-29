@@ -9,8 +9,8 @@ const store = useExhibitionStore()
       <h2>{{ store.info.title }}</h2>
       <p class="concept">"{{ store.info.concept }}"</p>
       <div class="meta-grid">
-        <div><strong>📆 展出日期：</strong>{{ store.info.date }}</div>
         <div><strong>📍 展出地點：</strong>{{ store.info.location }}</div>
+        <div><strong>📆 展出日期：</strong>{{ store.info.date }}</div>
       </div>
     </div>
 
@@ -65,8 +65,9 @@ const store = useExhibitionStore()
 }
 .meta-grid {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  gap: 2.5rem;
+  gap: 1rem;
   font-size: 0.9rem;
   color: #cbd5e1;
   border-top: 1px solid #1f1f2e;
