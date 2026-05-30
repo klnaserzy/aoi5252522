@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { TimelineEvent } from '@/utils/api'
+import { createRecord, getRecords } from '@/utils/api'
 import { useMockApi } from '../stores/mockApi'
 
 type Year = '2021' | '2022' | '2023' | '2024' | '2025' | '2026'
@@ -117,6 +118,8 @@ const timelineInteracts = ref<TimelineInteract[]>([
 
 const mockApiStore = useMockApi()
 
+const createEventLoading = ref(false)
+
 const events = computed(() => {
   return mockApiStore.timelineEvent
 })
@@ -216,9 +219,26 @@ const cancelAddEvent = () => {
   }
 }
 
-const confirmAddEvent = () => {
-  events.value.push({ ...newEvent.value })
-  cancelAddEvent()
+const confirmAddEvent = async () => {
+  createEventLoading.value = true
+  try {
+    const now = new Date() // 取得當前台北時間
+
+    const hours = now.getHours() // 取得小時 (0 ~ 23)
+    const minutes = now.getMinutes() // 取得分鐘 (0 ~ 59)
+    const seconds = now.getSeconds() // 取得秒數 (0 ~ 59)
+
+    newEvent.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+
+    await createRecord(newEvent.value)
+    showAddForm.value = false
+    cancelAddEvent()
+    mockApiStore.fetchData()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    createEventLoading.value = false
+  }
 }
 </script>
 

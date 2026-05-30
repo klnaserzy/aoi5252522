@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed } from 'vue'
 import { useMockApi } from '../stores/mockApi'
 import { createRecord } from '@/utils/api'
 import type { TweetCard } from '@/utils/api'
@@ -21,7 +21,7 @@ const filteredItems = computed(() => {
 
 const showModal = ref(false)
 
-const newTweet = reactive<TweetCard>({
+const newTweet = ref<TweetCard>({
   page: 'tweet',
   position: 'tweetCard',
   url: '',
@@ -42,24 +42,32 @@ const closeModal = () => {
 }
 
 const clearForm = () => {
-  Object.assign(newTweet, {
+  newTweet.value = {
     page: 'tweet',
     position: 'tweetCard',
     url: '',
     author: '',
     authorHandle: '',
-    type: 'official',
+    type: 'official' as TweetCard['type'],
     title: '',
     description: '',
     date: new Date().toISOString().slice(0, 10),
-  })
+  }
 }
 
 const addTweet = async () => {
   createRecordLoading.value = true
   try {
-    await createRecord(newTweet)
-    tweetCard.value.push({ ...newTweet })
+    const now = new Date() // 取得當前台北時間
+
+    const hours = now.getHours() // 取得小時 (0 ~ 23)
+    const minutes = now.getMinutes() // 取得分鐘 (0 ~ 59)
+    const seconds = now.getSeconds() // 取得秒數 (0 ~ 59)
+
+    newTweet.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+
+    await createRecord(newTweet.value)
+    mockApiStore.fetchData()
     closeModal()
     clearForm()
   } catch (error) {

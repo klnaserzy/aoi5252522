@@ -22,6 +22,7 @@ export const useMockApi = defineStore('mockApi', () => {
   })
 
   return {
+    fetchData,
     tweetCard,
     timelineEvent,
   }
