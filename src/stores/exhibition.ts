@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export interface ExhibitItem {
@@ -5,7 +6,7 @@ export interface ExhibitItem {
   url: string
   author: string
   authorHandle: string
-  type: 'announcement' | 'artwork' | 'interaction'
+  type: 'official' | 'artwork' | 'other'
   title: string
   description: string
   date: string
@@ -29,13 +30,13 @@ export interface MerchandiseItem {
 }
 
 export const useExhibitionStore = defineStore('exhibition', () => {
-  const exhibits = [
+  const exhibits = ref<ExhibitItem[]>([
     {
       id: '2058909320495128866',
       url: 'https://x.com/AoiHinamori/status/2058909320495128866',
       author: 'Aoi Hinamori 🎀',
       authorHandle: '@AoiHinamori',
-      type: 'announcement',
+      type: 'official',
       title: '【展覽開幕】主視覺公告與活動啟動',
       description:
         '《蝕 / 光》代表著「光曾被吞沒，但從未真正消失」這不只是一場畫展 更是我一路走來的故事！',
@@ -46,7 +47,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       url: 'https://x.com/AoiHinamori/status/2059092306679288066',
       author: 'Aoi Hinamori 🎀',
       authorHandle: '@AoiHinamori',
-      type: 'interaction',
+      type: 'official',
       title: '商品情報 周邊公開',
       description:
         '這次的周邊是我傾注一切的心血！ 希望大家可以把《蝕 / 光》的故事，一起帶回家收藏！',
@@ -68,7 +69,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       url: 'https://x.com/AoiHinamori/status/2059490425191428293',
       author: 'Aoi Hinamori 🎀',
       authorHandle: '@AoiHinamori',
-      type: 'interaction',
+      type: 'official',
       title: '預購品 ✦LAHEE',
       description:
         'LAHEE 聽見這個名字的瞬間 相信光之戰士們已經在腦中自動播放了🎶 這款項鍊以十字架與向日葵為設計核心🌻 將旅途中那些難忘的旋...',
@@ -84,7 +85,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       description: 'dd 娃',
       date: '2026-05-27',
     },
-  ] as ExhibitItem[]
+  ])
 
   // 實體展覽資訊
   const info = {
