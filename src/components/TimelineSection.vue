@@ -1,132 +1,150 @@
 <script setup lang="ts">
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
+import type { TimelineEvent } from '@/utils/api'
+import { useMockApi } from '../stores/mockApi'
 
 type Year = '2021' | '2022' | '2023' | '2024' | '2025' | '2026'
 
 interface TimelineInteract {
-  date: Year
+  year: Year
   stage: 'light-early' | 'eclipse' | 'reconciliation'
   stageLabel: string
   icon: string
 }
 
-interface TimelineEvent {
-  date: string // 具體年月
-  title: string // 事件主題
-  subtitle: string // 一句話摘要
-  content: string // 詳細敘事內文
-}
-
 const timelineInteracts = ref<TimelineInteract[]>([
   {
-    date: '2021',
+    year: '2021',
     stage: 'light-early',
     stageLabel: '初開張',
     icon: '🎀',
   },
   {
-    date: '2022',
+    year: '2022',
     stage: 'light-early',
     stageLabel: '破繭與淬鍊',
     icon: '✨',
   },
   {
-    date: '2023',
+    year: '2023',
     stage: 'eclipse',
     stageLabel: '暗流湧現',
     icon: '🖤',
   },
   {
-    date: '2024',
+    year: '2024',
     stage: 'eclipse',
     stageLabel: '沉入蝕淵',
     icon: '🩹',
   },
   {
-    date: '2025',
+    year: '2025',
     stage: 'reconciliation',
     stageLabel: '破曉與和解',
     icon: '🔮',
   },
   {
-    date: '2026',
+    year: '2026',
     stage: 'reconciliation',
     stageLabel: '蝕光終章',
     icon: '👑',
   },
 ])
 
-// 補齊 Aoi 護士 5 年來從出道到現今五週年特展的真實精細資料
-const events = ref<TimelineEvent[]>([
-  {
-    date: '2021',
-    title: '人間診所開張',
-    subtitle: '初配信啟動！吸血鬼護士降臨',
-    content:
-      '抱著「讓所有人充滿笑容」的純粹初心，Aoi 作為魔界護士正式在人間展開 VTuber 活動。充滿活力的趣味雜談與搞怪企劃，成功吸引了第一批核心「病患」入院。',
-  },
-  {
-    date: '2023',
-    title: '遭遇數位暴風雨',
-    subtitle: '個人勢的瓶頸與網路雜音的煎熬',
-    content:
-      '隨著名氣而來的，是成正比的巨大壓力與網路上的惡意流言。面對創作瓶頸與無法言說的身心症狀，Aoi 經歷了無數個關掉直播後獨自哭泣的黑夜，光芒逐漸被日蝕般的陰影吞噬。',
-  },
-  {
-    date: '2024',
-    title: '閃耀的成長期',
-    subtitle: '訂閱里程碑達成與 3D 化突破',
-    content:
-      '這是全速奔跑的一年。隨著社群關注度爆發，陸續解鎖了多場大型連動與個人專屬 3D 模型 reveal，在舞台上散發著最耀眼、最純粹的粉紅光芒。',
-  },
-  {
-    date: '2024',
-    title: '黑暗中的沉澱',
-    subtitle: '短暫靜養，將痛苦轉化為音樂能量',
-    content:
-      '為了拉住即將墜落的自己，Aoi 選擇調整步調。在減少公開露面的沉寂期裡，她將這些掙扎、迷茫與眼淚，默默揉進了原創歌曲與漫畫腳本的籌備中。',
-  },
-  {
-    date: '2025',
-    title: '破曉與自我和解',
-    subtitle: '四週年回歸：帶著陰影一起前行',
-    content:
-      '經歷低谷後重新站上舞台。這時的 Aoi 不再強求完美的偽裝，而是學會接納自己的脆弱與不完美。她發現，那些曾經的傷疤，在病患們溫暖的包容下，反而折射出了更溫柔的光暈。',
-  },
-  {
-    date: '2026',
-    title: '《蝕／光》五週年特展',
-    subtitle: '實體畫展盛大開幕！見證終點亦是起點',
-    content:
-      '迎來意義非凡的 5 週年！正式推出籌備已久的台北西門實體特展、手工真皮旅行袋等頂級週邊。這場展覽是她將 5 年心路歷程具現化的期末報告，也是獻給所有不離不棄患者們的最深謝意。',
-  },
-])
+// // 補齊 Aoi 護士 5 年來從出道到現今五週年特展的真實精細資料
+// const events = ref<TimelineEvent[]>([
+//   {
+//     id: 6,
+//     page: 'timeline',
+//     position: 'event',
+//     year: '2021',
+//     title: '人間診所開張',
+//     subtitle: '初配信啟動！吸血鬼護士降臨',
+//     content:
+//       '抱著「讓所有人充滿笑容」的純粹初心，Aoi 作為魔界護士正式在人間展開 VTuber 活動。充滿活力的趣味雜談與搞怪企劃，成功吸引了第一批核心「病患」入院。',
+//   },
+//   {
+//     id: 7,
+//     page: 'timeline',
+//     position: 'event',
+//     year: '2023',
+//     title: '遭遇數位暴風雨',
+//     subtitle: '個人勢的瓶頸與網路雜音的煎熬',
+//     content:
+//       '隨著名氣而來的，是成正比的巨大壓力與網路上的惡意流言。面對創作瓶頸與無法言說的身心症狀，Aoi 經歷了無數個關掉直播後獨自哭泣的黑夜，光芒逐漸被日蝕般的陰影吞噬。',
+//   },
+//   {
+//     id: 8,
+//     page: 'timeline',
+//     position: 'event',
+//     year: '2024',
+//     title: '閃耀的成長期',
+//     subtitle: '訂閱里程碑達成與 3D 化突破',
+//     content:
+//       '這是全速奔跑的一年。隨著社群關注度爆發，陸續解鎖了多場大型連動與個人專屬 3D 模型 reveal，在舞台上散發著最耀眼、最純粹的粉紅光芒。',
+//   },
+//   {
+//     id: 9,
+//     page: 'timeline',
+//     position: 'event',
+//     year: '2024',
+//     title: '黑暗中的沉澱',
+//     subtitle: '短暫靜養，將痛苦轉化為音樂能量',
+//     content:
+//       '為了拉住即將墜落的自己，Aoi 選擇調整步調。在減少公開露面的沉寂期裡，她將這些掙扎、迷茫與眼淚，默默揉進了原創歌曲與漫畫腳本的籌備中。',
+//   },
+//   {
+//     id: 10,
+//     page: 'timeline',
+//     position: 'event',
+//     year: '2025',
+//     title: '破曉與自我和解',
+//     subtitle: '四週年回歸：帶著陰影一起前行',
+//     content:
+//       '經歷低谷後重新站上舞台。這時的 Aoi 不再強求完美的偽裝，而是學會接納自己的脆弱與不完美。她發現，那些曾經的傷疤，在病患們溫暖的包容下，反而折射出了更溫柔的光暈。',
+//   },
+//   {
+//     id: 11,
+//     page: 'timeline',
+//     position: 'event',
+//     year: '2026',
+//     title: '《蝕／光》五週年特展',
+//     subtitle: '實體畫展盛大開幕！見證終點亦是起點',
+//     content:
+//       '迎來意義非凡的 5 週年！正式推出籌備已久的台北西門實體特展、手工真皮旅行袋等頂級週邊。這場展覽是她將 5 年心路歷程具現化的期末報告，也是獻給所有不離不棄患者們的最深謝意。',
+//   },
+// ])
 
+const mockApiStore = useMockApi()
+
+const events = computed(() => {
+  return mockApiStore.timelineEvent
+})
 // 當前選中的事件索引（預設停在最後一個最新的 5 週年節點）
 const activeIndex = ref<Year>('2021')
 
 const year2021Events = computed(() => {
-  return events.value.filter((e) => e.date === '2021')
+  return events.value.filter((e) => e.year === '2021')
 })
 
 const year2022Events = computed(() => {
-  return events.value.filter((e) => e.date === '2022')
+  return events.value.filter((e) => e.year === '2022')
 })
 
 const year2023Events = computed(() => {
-  return events.value.filter((e) => e.date === '2023')
+  return events.value.filter((e) => e.year === '2023')
 })
 
 const year2024Events = computed(() => {
-  return events.value.filter((e) => e.date === '2024')
+  return events.value.filter((e) => e.year === '2024')
 })
 
 const year2025Events = computed(() => {
-  return events.value.filter((e) => e.date === '2025')
+  return events.value.filter((e) => e.year === '2025')
 })
 
 const year2026Events = computed(() => {
-  return events.value.filter((e) => e.date === '2026')
+  return events.value.filter((e) => e.year === '2026')
 })
 
 const selectYearEvents = computed(() => {
@@ -149,7 +167,7 @@ const selectYearEvents = computed(() => {
 })
 
 const currentTimeLine = computed<TimelineInteract>(() => {
-  return timelineInteracts.value.find((i) => i.date === activeIndex.value)!
+  return timelineInteracts.value.find((i) => i.year === activeIndex.value)!
 })
 
 const stageStyleClass = computed(() => {
@@ -165,21 +183,41 @@ const handleSelectYear = (year: Year) => {
 }
 
 const showAddForm = ref(false)
-const newEvent = reactive({ title: '', subtitle: '', content: '' })
+const newEvent = ref<TimelineEvent>({
+  page: 'timeline',
+  position: 'event',
+  year: activeIndex.value,
+  title: '',
+  subtitle: '',
+  content: '',
+})
 
 watch(activeIndex, () => {
   showAddForm.value = false
-  Object.assign(newEvent, { title: '', subtitle: '', content: '' })
+  newEvent.value = {
+    page: 'timeline',
+    position: 'event',
+    year: activeIndex.value,
+    title: '',
+    subtitle: '',
+    content: '',
+  }
 })
 
 const cancelAddEvent = () => {
   showAddForm.value = false
-  Object.assign(newEvent, { title: '', subtitle: '', content: '' })
+  newEvent.value = {
+    page: 'timeline',
+    position: 'event',
+    year: activeIndex.value,
+    title: '',
+    subtitle: '',
+    content: '',
+  }
 }
 
 const confirmAddEvent = () => {
-  if (!newEvent.title.trim()) return
-  events.value.push({ date: activeIndex.value, ...newEvent })
+  events.value.push({ ...newEvent.value })
   cancelAddEvent()
 }
 </script>
@@ -197,15 +235,15 @@ const confirmAddEvent = () => {
       <div class="progress-line"></div>
       <div
         v-for="timelineInteract in timelineInteracts"
-        :key="timelineInteract.date"
+        :key="timelineInteract.year"
         class="timeline-node"
-        :class="{ active: activeIndex === timelineInteract.date, [timelineInteract.stage]: true }"
-        @click="handleSelectYear(timelineInteract.date)"
+        :class="{ active: activeIndex === timelineInteract.year, [timelineInteract.stage]: true }"
+        @click="handleSelectYear(timelineInteract.year)"
       >
         <div class="node-dot">
           <span class="node-icon">{{ timelineInteract.icon }}</span>
         </div>
-        <span class="node-year">{{ timelineInteract.date }}</span>
+        <span class="node-year">{{ timelineInteract.year }}</span>
       </div>
     </div>
 

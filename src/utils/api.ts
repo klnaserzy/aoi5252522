@@ -1,17 +1,16 @@
 import request from '@/utils/mockApi'
 
 export interface BaseRecord {
-  id?: string
+  id?: number
   page: string
   position: string
+  hidden?: boolean
   updateTime?: string
   updateBy?: string
-  hidden?: boolean
 }
-export interface TweetCard {
+export interface TweetCard extends BaseRecord {
   page: 'tweet'
   position: 'tweetCard'
-  id?: number
   url: string
   author: string
   authorHandle: string
@@ -19,6 +18,14 @@ export interface TweetCard {
   title: string
   description: string
   date: string
+}
+export interface TimelineEvent extends BaseRecord {
+  page: 'timeline'
+  position: 'event'
+  year: string // 具體年份
+  title: string // 事件主題
+  subtitle: string // 一句話摘要
+  content: string // 詳細敘事內文
 }
 
 export const getRecords = () => {

@@ -15,7 +15,7 @@ export interface MerchandiseItem {
 export const useExhibitionStore = defineStore('exhibition', () => {
   const exhibits = ref<TweetCard[]>([
     {
-      id: 1,
+      id: '1',
       page: 'tweet',
       position: 'tweetCard',
       url: 'https://x.com/AoiHinamori/status/2058909320495128866',
@@ -28,7 +28,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: 2,
+      id: '2',
       page: 'tweet',
       position: 'tweetCard',
       url: 'https://x.com/AoiHinamori/status/2059092306679288066',
@@ -41,7 +41,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: 3,
+      id: '3',
       page: 'tweet',
       position: 'tweetCard',
       url: 'https://x.com/star_2290/status/2059096643895734771',
@@ -54,7 +54,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: 4,
+      id: '4',
       page: 'tweet',
       position: 'tweetCard',
       url: 'https://x.com/AoiHinamori/status/2059490425191428293',
@@ -67,7 +67,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: 5,
+      id: '5',
       page: 'tweet',
       position: 'tweetCard',
       url: 'https://x.com/chocobanadd/status/2059532645982441844',
