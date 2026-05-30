@@ -13,6 +13,7 @@ const router = createRouter({
       name: 'location',
       component: () => import('../views/LocationView.vue'),
     },
+    { path: '/chat', name: 'chat', component: () => import('../views/ChatView.vue') },
     {
       path: '/:catchAll(.*)',
       name: 'NotFound',

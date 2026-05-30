@@ -24,6 +24,11 @@ const headerLinks = [
     path: '/location',
     label: '交通指南',
   },
+  {
+    name: 'Chat',
+    path: '/chat',
+    label: '聊天室',
+  },
 ]
 
 export default headerLinks
