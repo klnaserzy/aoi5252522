@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 
 interface StationInfo {
   name: string
@@ -32,6 +32,16 @@ const mrtStations = ref<StationInfo[]>([
       '出西門町步行區大門口後左轉，沿著漢中街直行（經過成都路與西門紅樓），過馬路後繼續直行即可抵達。',
   },
 ])
+
+const showAddMrt = ref(false)
+const newMrt = reactive({ name: '', line: '', distance: '', guide: '' })
+const cancelMrt = () => { showAddMrt.value = false; Object.assign(newMrt, { name: '', line: '', distance: '', guide: '' }) }
+const confirmMrt = () => { if (!newMrt.name.trim()) return; mrtStations.value.push({ ...newMrt }); cancelMrt() }
+
+const showAddBus = ref(false)
+const newBus = reactive({ name: '', buses: '', guide: '' })
+const cancelBus = () => { showAddBus.value = false; Object.assign(newBus, { name: '', buses: '', guide: '' }) }
+const confirmBus = () => { if (!newBus.name.trim()) return; busStations.value.push({ ...newBus }); cancelBus() }
 
 // 附近公車站台資訊
 const busStations = ref([
@@ -91,7 +101,7 @@ const busStations = ref([
           <p class="time-info">⏰ 開放時間：11:00 – 18:00</p>
         </div>
 
-        <!-- 捷運指引 -->
+        <!-- MRTGuide: 捷運指引 -->
         <div class="transport-section">
           <h3 class="section-sub"><span class="icon">🚇</span> 搭乘捷運 (MRT)</h3>
           <div v-for="mrt in mrtStations" :key="mrt.name" class="station-card">
@@ -102,9 +112,24 @@ const busStations = ref([
             <p class="distance-text">⏳ {{ mrt.distance }}</p>
             <p class="guide-text">{{ mrt.guide }}</p>
           </div>
+
+          <!-- 新增捷運指引 -->
+          <div class="add-station-area">
+            <button v-if="!showAddMrt" class="add-station-btn" @click="showAddMrt = true">＋ 新增捷運站台</button>
+            <div v-else class="add-station-form">
+              <input v-model="newMrt.name" class="s-input" placeholder="站名（含出口）*" />
+              <input v-model="newMrt.line" class="s-input" placeholder="路線名稱" />
+              <input v-model="newMrt.distance" class="s-input" placeholder="步行距離" />
+              <textarea v-model="newMrt.guide" class="s-textarea" rows="2" placeholder="指引說明..." />
+              <div class="add-station-actions">
+                <button class="s-cancel" @click="cancelMrt">取消</button>
+                <button class="s-confirm" @click="confirmMrt">新增</button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- 公車指引 -->
+        <!-- busGuide: 公車指引 -->
         <div class="transport-section">
           <h3 class="section-sub"><span class="icon">🚌</span> 搭乘公車 (Bus)</h3>
           <div v-for="bus in busStations" :key="bus.name" class="station-card">
@@ -113,6 +138,20 @@ const busStations = ref([
             </div>
             <p class="bus-lines"><strong>停靠線路：</strong>{{ bus.buses }}</p>
             <p class="guide-text">{{ bus.guide }}</p>
+          </div>
+
+          <!-- 新增公車指引 -->
+          <div class="add-station-area">
+            <button v-if="!showAddBus" class="add-station-btn" @click="showAddBus = true">＋ 新增公車站台</button>
+            <div v-else class="add-station-form">
+              <input v-model="newBus.name" class="s-input" placeholder="站名 *" />
+              <input v-model="newBus.buses" class="s-input" placeholder="停靠線路（逗號分隔）" />
+              <textarea v-model="newBus.guide" class="s-textarea" rows="2" placeholder="指引說明..." />
+              <div class="add-station-actions">
+                <button class="s-cancel" @click="cancelBus">取消</button>
+                <button class="s-confirm" @click="confirmBus">新增</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -319,5 +358,80 @@ const busStations = ref([
 .notice-bar li {
   margin-bottom: 0.5rem;
   line-height: 1.6;
+}
+
+.add-station-area {
+  margin-top: 0.75rem;
+}
+.add-station-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed #2a2a35;
+  border-radius: 8px;
+  color: #4b5563;
+  font-size: 0.82rem;
+  padding: 0.55rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.add-station-btn:hover {
+  border-color: rgba(255, 94, 126, 0.4);
+  color: #ff5e7e;
+}
+.add-station-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #0d0d14;
+  border: 1px solid #2a2a35;
+  border-radius: 8px;
+  padding: 0.875rem;
+}
+.s-input,
+.s-textarea {
+  background: #140f20;
+  border: 1px solid #2a2a35;
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  color: #f8fafc;
+  font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+}
+.s-input:focus,
+.s-textarea:focus {
+  border-color: rgba(255, 94, 126, 0.5);
+}
+.s-textarea {
+  resize: vertical;
+}
+.add-station-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+.s-cancel {
+  background: transparent;
+  border: 1px solid #2a2a35;
+  color: #6b7280;
+  padding: 0.3rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.s-confirm {
+  background: rgba(255, 94, 126, 0.15);
+  border: 1px solid rgba(255, 94, 126, 0.3);
+  color: #ff5e7e;
+  padding: 0.3rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.s-confirm:hover {
+  background: rgba(255, 94, 126, 0.28);
 }
 </style>
