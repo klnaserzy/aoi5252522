@@ -28,9 +28,18 @@ export interface TimelineEvent extends BaseRecord {
   content: string // 詳細敘事內文
 }
 export interface mrtStationsInfo extends BaseRecord {
+  page: 'location'
+  position: 'mrtStationsInfo'
   name: string
   line: string
   distance: string
+  guide: string
+}
+export interface busStationsInfo extends BaseRecord {
+  page: 'location'
+  position: 'busStationsInfo'
+  name: string
+  buses: string
   guide: string
 }
 
