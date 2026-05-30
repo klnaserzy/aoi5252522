@@ -1,61 +1,96 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, computed } from 'vue'
+import type { mrtStationsInfo, busStationsInfo } from '@/utils/api'
+import { createRecord } from '@/utils/api'
+import { useMockApi } from '../stores/mockApi'
 
-interface StationInfo {
-  name: string
-  line: string
-  distance: string
-  guide: string
-}
+const mockApiStore = useMockApi()
+
+const createMrtLoading = ref(false)
+const createBusLoading = ref(false)
 
 // 實體展出資訊
 const venue = ref({
   name: '築步苑',
   address: '108臺北市萬華區新起里漢中街160號',
-  googleMapsUrl: 'https://maps.app.goo.gl/qjGQCoFNrX33pmb66', // 可替換為實際的地圖縮網址
+  googleMapsUrl: 'https://maps.app.goo.gl/qjGQCoFNrX33pmb66', // 實際的地圖縮網址
 })
 
 // 附近捷運站台資訊
-const mrtStations = ref<StationInfo[]>([
-  {
-    name: '捷運西門站（1號出口）',
-    line: '板南線 / 松山新店線',
-    distance: '步行約 3 分鐘 (約 230 公尺)',
-    guide:
-      '出站後左轉進入漢中街（往西門紅樓旁側方向），直行通過長沙街二段路口，目的地即在您的右側。',
-  },
-  {
-    name: '捷運西門站（6號出口）',
-    line: '板南線 / 松山新店線',
-    distance: '步行約 5 分鐘 (約 380 公尺)',
-    guide:
-      '出西門町步行區大門口後左轉，沿著漢中街直行（經過成都路與西門紅樓），過馬路後繼續直行即可抵達。',
-  },
-])
+const mrtStations = computed(() => {
+  return mockApiStore.mrtStations
+})
 
 const showAddMrt = ref(false)
-const newMrt = reactive({ name: '', line: '', distance: '', guide: '' })
-const cancelMrt = () => { showAddMrt.value = false; Object.assign(newMrt, { name: '', line: '', distance: '', guide: '' }) }
-const confirmMrt = () => { if (!newMrt.name.trim()) return; mrtStations.value.push({ ...newMrt }); cancelMrt() }
+const newMrt = ref<mrtStationsInfo>({
+  page: 'location',
+  position: 'mrtStationsInfo',
+  name: '',
+  line: '',
+  distance: '',
+  guide: '',
+})
+const cancelMrt = () => {
+  showAddMrt.value = false
+  newMrt.value = {
+    page: 'location',
+    position: 'mrtStationsInfo',
+    name: '',
+    line: '',
+    distance: '',
+    guide: '',
+  }
+}
+const confirmMrt = async () => {
+  createMrtLoading.value = true
+  try {
+    const now = new Date()
+    newMrt.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+
+    await createRecord(newMrt.value)
+    mockApiStore.fetchData()
+    cancelMrt()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    createMrtLoading.value = false
+  }
+}
 
 const showAddBus = ref(false)
-const newBus = reactive({ name: '', buses: '', guide: '' })
-const cancelBus = () => { showAddBus.value = false; Object.assign(newBus, { name: '', buses: '', guide: '' }) }
-const confirmBus = () => { if (!newBus.name.trim()) return; busStations.value.push({ ...newBus }); cancelBus() }
+const newBus = ref<busStationsInfo>({
+  page: 'location',
+  position: 'busStationsInfo',
+  name: '',
+  buses: '',
+  guide: '',
+})
+const cancelBus = () => {
+  showAddBus.value = false
+  newBus.value = { page: 'location', position: 'busStationsInfo', name: '', buses: '', guide: '' }
+}
+
+const confirmBus = async () => {
+  createBusLoading.value = true
+  try {
+    const now = new Date()
+
+    newBus.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+
+    await createRecord(newBus.value)
+    mockApiStore.fetchData()
+    cancelBus()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    createBusLoading.value = false
+  }
+}
 
 // 附近公車站台資訊
-const busStations = ref([
-  {
-    name: '捷運西門站',
-    buses: '307, 265, 212, 965, 綠17 (大遠百/西門市場側)',
-    guide: '下車後往西門紅樓方向移動，沿漢中街步行約 4 分鐘。',
-  },
-  {
-    name: '西門市場(漢中)',
-    buses: '18, 235, 257, 621, 640',
-    guide: '站牌即位在漢中街周邊，下車後朝長沙街方向步行 1-2 分鐘。',
-  },
-])
+const busStations = computed(() => {
+  return mockApiStore.busStations
+})
 </script>
 
 <template>
@@ -74,7 +109,7 @@ const busStations = ref([
       <!-- 左欄：地圖區塊 -->
       <div class="map-block">
         <div class="map-wrapper">
-          <!-- 實際環境中可替換為真實的 Google Map Embed Iframe -->
+          <!--  Google Map Embed Iframe -->
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3614.7337926284614!2d121.5049386!3d25.0431948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442a90967db053d%3A0x63eb4c14bdf88285!2zMTA45Y-w5YyX5biC6JCs6I-v5Y2A5ryi5Lit6KGXMTYw6Jmf!5e0!3m2!1szh-TW!2stw!4v1716000000000!5m2!1szh-TW!2stw"
             width="100%"
@@ -115,15 +150,25 @@ const busStations = ref([
 
           <!-- 新增捷運指引 -->
           <div class="add-station-area">
-            <button v-if="!showAddMrt" class="add-station-btn" @click="showAddMrt = true">＋ 新增捷運站台</button>
+            <button v-if="!showAddMrt" class="add-station-btn" @click="showAddMrt = true">
+              ＋ 新增捷運站台
+            </button>
             <div v-else class="add-station-form">
               <input v-model="newMrt.name" class="s-input" placeholder="站名（含出口）*" />
               <input v-model="newMrt.line" class="s-input" placeholder="路線名稱" />
               <input v-model="newMrt.distance" class="s-input" placeholder="步行距離" />
-              <textarea v-model="newMrt.guide" class="s-textarea" rows="2" placeholder="指引說明..." />
+              <textarea
+                v-model="newMrt.guide"
+                class="s-textarea"
+                rows="2"
+                placeholder="指引說明..."
+              />
               <div class="add-station-actions">
-                <button class="s-cancel" @click="cancelMrt">取消</button>
-                <button class="s-confirm" @click="confirmMrt">新增</button>
+                <button class="s-cancel" :disabled="createMrtLoading" @click="cancelMrt">取消</button>
+                <button class="s-confirm" :disabled="createMrtLoading" @click="confirmMrt">
+                  <span v-if="createMrtLoading" class="btn-spinner" />
+                  {{ createMrtLoading ? '新增中...' : '新增' }}
+                </button>
               </div>
             </div>
           </div>
@@ -142,14 +187,24 @@ const busStations = ref([
 
           <!-- 新增公車指引 -->
           <div class="add-station-area">
-            <button v-if="!showAddBus" class="add-station-btn" @click="showAddBus = true">＋ 新增公車站台</button>
+            <button v-if="!showAddBus" class="add-station-btn" @click="showAddBus = true">
+              ＋ 新增公車站台
+            </button>
             <div v-else class="add-station-form">
               <input v-model="newBus.name" class="s-input" placeholder="站名 *" />
               <input v-model="newBus.buses" class="s-input" placeholder="停靠線路（逗號分隔）" />
-              <textarea v-model="newBus.guide" class="s-textarea" rows="2" placeholder="指引說明..." />
+              <textarea
+                v-model="newBus.guide"
+                class="s-textarea"
+                rows="2"
+                placeholder="指引說明..."
+              />
               <div class="add-station-actions">
-                <button class="s-cancel" @click="cancelBus">取消</button>
-                <button class="s-confirm" @click="confirmBus">新增</button>
+                <button class="s-cancel" :disabled="createBusLoading" @click="cancelBus">取消</button>
+                <button class="s-confirm" :disabled="createBusLoading" @click="confirmBus">
+                  <span v-if="createBusLoading" class="btn-spinner" />
+                  {{ createBusLoading ? '新增中...' : '新增' }}
+                </button>
               </div>
             </div>
           </div>
@@ -372,7 +427,9 @@ const busStations = ref([
   font-size: 0.82rem;
   padding: 0.55rem;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 .add-station-btn:hover {
   border-color: rgba(255, 94, 126, 0.4);
@@ -421,6 +478,9 @@ const busStations = ref([
   font-size: 0.82rem;
 }
 .s-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background: rgba(255, 94, 126, 0.15);
   border: 1px solid rgba(255, 94, 126, 0.3);
   color: #ff5e7e;
@@ -433,5 +493,22 @@ const busStations = ref([
 }
 .s-confirm:hover {
   background: rgba(255, 94, 126, 0.28);
+}
+.s-confirm:disabled,
+.s-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-spinner {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 2px solid rgba(255, 94, 126, 0.3);
+  border-top-color: #ff5e7e;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>

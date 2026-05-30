@@ -1,7 +1,7 @@
 import request from '@/utils/mockApi'
 
 export interface BaseRecord {
-  id?: number
+  id?: string
   page: string
   position: string
   hidden?: boolean
@@ -26,6 +26,12 @@ export interface TimelineEvent extends BaseRecord {
   title: string // 事件主題
   subtitle: string // 一句話摘要
   content: string // 詳細敘事內文
+}
+export interface mrtStationsInfo extends BaseRecord {
+  name: string
+  line: string
+  distance: string
+  guide: string
 }
 
 export const getRecords = () => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { TimelineEvent } from '@/utils/api'
-import { createRecord, getRecords } from '@/utils/api'
+import { createRecord } from '@/utils/api'
 import { useMockApi } from '../stores/mockApi'
 
 type Year = '2021' | '2022' | '2023' | '2024' | '2025' | '2026'
@@ -51,70 +51,6 @@ const timelineInteracts = ref<TimelineInteract[]>([
     icon: '👑',
   },
 ])
-
-// // 補齊 Aoi 護士 5 年來從出道到現今五週年特展的真實精細資料
-// const events = ref<TimelineEvent[]>([
-//   {
-//     id: 6,
-//     page: 'timeline',
-//     position: 'event',
-//     year: '2021',
-//     title: '人間診所開張',
-//     subtitle: '初配信啟動！吸血鬼護士降臨',
-//     content:
-//       '抱著「讓所有人充滿笑容」的純粹初心，Aoi 作為魔界護士正式在人間展開 VTuber 活動。充滿活力的趣味雜談與搞怪企劃，成功吸引了第一批核心「病患」入院。',
-//   },
-//   {
-//     id: 7,
-//     page: 'timeline',
-//     position: 'event',
-//     year: '2023',
-//     title: '遭遇數位暴風雨',
-//     subtitle: '個人勢的瓶頸與網路雜音的煎熬',
-//     content:
-//       '隨著名氣而來的，是成正比的巨大壓力與網路上的惡意流言。面對創作瓶頸與無法言說的身心症狀，Aoi 經歷了無數個關掉直播後獨自哭泣的黑夜，光芒逐漸被日蝕般的陰影吞噬。',
-//   },
-//   {
-//     id: 8,
-//     page: 'timeline',
-//     position: 'event',
-//     year: '2024',
-//     title: '閃耀的成長期',
-//     subtitle: '訂閱里程碑達成與 3D 化突破',
-//     content:
-//       '這是全速奔跑的一年。隨著社群關注度爆發，陸續解鎖了多場大型連動與個人專屬 3D 模型 reveal，在舞台上散發著最耀眼、最純粹的粉紅光芒。',
-//   },
-//   {
-//     id: 9,
-//     page: 'timeline',
-//     position: 'event',
-//     year: '2024',
-//     title: '黑暗中的沉澱',
-//     subtitle: '短暫靜養，將痛苦轉化為音樂能量',
-//     content:
-//       '為了拉住即將墜落的自己，Aoi 選擇調整步調。在減少公開露面的沉寂期裡，她將這些掙扎、迷茫與眼淚，默默揉進了原創歌曲與漫畫腳本的籌備中。',
-//   },
-//   {
-//     id: 10,
-//     page: 'timeline',
-//     position: 'event',
-//     year: '2025',
-//     title: '破曉與自我和解',
-//     subtitle: '四週年回歸：帶著陰影一起前行',
-//     content:
-//       '經歷低谷後重新站上舞台。這時的 Aoi 不再強求完美的偽裝，而是學會接納自己的脆弱與不完美。她發現，那些曾經的傷疤，在病患們溫暖的包容下，反而折射出了更溫柔的光暈。',
-//   },
-//   {
-//     id: 11,
-//     page: 'timeline',
-//     position: 'event',
-//     year: '2026',
-//     title: '《蝕／光》五週年特展',
-//     subtitle: '實體畫展盛大開幕！見證終點亦是起點',
-//     content:
-//       '迎來意義非凡的 5 週年！正式推出籌備已久的台北西門實體特展、手工真皮旅行袋等頂級週邊。這場展覽是她將 5 年心路歷程具現化的期末報告，也是獻給所有不離不棄患者們的最深謝意。',
-//   },
-// ])
 
 const mockApiStore = useMockApi()
 
@@ -302,8 +238,11 @@ const confirmAddEvent = async () => {
               placeholder="詳細敘述..."
             />
             <div class="add-form-actions">
-              <button class="add-cancel" @click="cancelAddEvent">取消</button>
-              <button class="add-confirm" @click="confirmAddEvent">新增</button>
+              <button class="add-cancel" :disabled="createEventLoading" @click="cancelAddEvent">取消</button>
+              <button class="add-confirm" :disabled="createEventLoading" @click="confirmAddEvent">
+                <span v-if="createEventLoading" class="btn-spinner" />
+                {{ createEventLoading ? '新增中...' : '新增' }}
+              </button>
             </div>
           </div>
         </div>
@@ -656,6 +595,9 @@ const confirmAddEvent = async () => {
   font-size: 0.85rem;
 }
 .add-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background: #374151;
   border: none;
   padding: 0.35rem 1.2rem;
@@ -665,6 +607,23 @@ const confirmAddEvent = async () => {
   font-weight: 600;
   color: #f8fafc;
   transition: background 0.2s;
+}
+.add-confirm:disabled,
+.add-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 .add-confirm:hover {
   background: #4b5563;
