@@ -44,7 +44,7 @@ const sendMessage = async () => {
     }
 
     await createChatRecord(message)
-    chatStore.fetchData()
+    chatStore.fetchChatData()
   } catch (error) {
     console.error(error)
   }
@@ -78,7 +78,7 @@ onMounted(async () => {
       </div>
       <div class="online-badge">
         <span class="dot" />
-        {{ messages.length }} 則留言
+        {{ messages ? messages.length : '0' }} 則留言
       </div>
     </div>
 

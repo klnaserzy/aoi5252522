@@ -9,7 +9,6 @@ export const useMockApi = defineStore('mockApi', () => {
     const response = await getRecords()
     mockApiData.value = response.data
   }
-  fetchData()
 
   const tweetCard = computed(() => {
     return mockApiData.value.filter(

@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import headerLinks from '@/constants/headerLinks'
+import { useMockApi } from '@/stores/mockApi'
+import { useChatStore } from '@/stores/chatStore'
+
+const mockApiStore = useMockApi()
+const chatStore = useChatStore()
 
 // 控制行動端選單開關狀態
 const isMenuOpen = ref(false)
+
+onMounted(() => {
+  Promise.all([mockApiStore.fetchData(), chatStore.fetchChatData()])
+})
 </script>
 
 <template>

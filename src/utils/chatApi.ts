@@ -1,7 +1,7 @@
 import request from '@/utils/mockApi'
 
 export interface Message {
-  id: string
+  id?: string
   author: string
   content: string
   time: string

@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useExhibitionStore } from '../stores/exhibition'
 
 const router = useRouter()
-const store = useExhibitionStore()
-
-const mainAnnouncement = computed(() => store.exhibits[0])
 </script>
 
 <template>
@@ -23,25 +18,32 @@ const mainAnnouncement = computed(() => store.exhibits[0])
       </div>
     </section>
 
-    <section v-if="mainAnnouncement" class="featured">
+    <section class="featured">
       <h2 class="section-title">✦ 最新展覽焦點 ✦</h2>
       <div class="announcement-card">
         <div class="card-header">
           <div class="user-meta">
             <span class="avatar-icon">🩺</span>
             <div>
-              <h3>{{ mainAnnouncement.author }}</h3>
-              <p>{{ mainAnnouncement.authorHandle }}</p>
+              <h3>Aoi Hinamori 🎀</h3>
+              <p>@AoiHinamori</p>
             </div>
           </div>
           <span class="badge">主要公告</span>
         </div>
         <div class="card-body">
-          <h4>{{ mainAnnouncement.title }}</h4>
-          <p>{{ mainAnnouncement.description }}</p>
+          <h4>【展覽開幕】主視覺公告與活動啟動</h4>
+          <p>
+            《蝕 / 光》代表著「光曾被吞沒，但從未真正消失」這不只是一場畫展 更是我一路走來的故事！
+          </p>
         </div>
         <div class="card-footer">
-          <a :href="mainAnnouncement.url" target="_blank" class="x-link">在 X 上查看原始推文 ↗</a>
+          <a
+            href="https://x.com/AoiHinamori/status/2058909320495128866"
+            target="_blank"
+            class="x-link"
+            >在 X 上查看原始推文 ↗</a
+          >
         </div>
       </div>
     </section>
