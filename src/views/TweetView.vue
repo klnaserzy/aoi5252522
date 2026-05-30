@@ -1,24 +1,33 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
-import { useExhibitionStore, type ExhibitItem } from '../stores/exhibition'
+import { useMockApi } from '../stores/mockApi'
+import { createRecord } from '@/utils/api'
+import type { TweetCard } from '@/utils/api'
 
-const store = useExhibitionStore()
+const mockApiStore = useMockApi()
+
+const tweetCard = computed(() => {
+  return mockApiStore.tweetCard
+})
 const filter = ref<'all' | 'artwork' | 'official' | 'other'>('all')
+const createRecordLoading = ref(false)
 
 const filteredItems = computed(() => {
-  if (filter.value === 'all') return store.exhibits
-  if (filter.value === 'artwork') return store.exhibits.filter((i) => i.type === 'artwork')
-  if (filter.value === 'official') return store.exhibits.filter((i) => i.type === 'official')
-  return store.exhibits.filter((i) => i.type === 'other')
+  if (filter.value === 'all') return tweetCard.value
+  if (filter.value === 'artwork') return tweetCard.value.filter((i) => i.type === 'artwork')
+  if (filter.value === 'official') return tweetCard.value.filter((i) => i.type === 'official')
+  return tweetCard.value.filter((i) => i.type === 'other')
 })
 
 const showModal = ref(false)
 
-const newTweet = reactive({
+const newTweet = reactive<TweetCard>({
+  page: 'tweet',
+  position: 'tweetCard',
   url: '',
   author: '',
   authorHandle: '',
-  type: 'official' as ExhibitItem['type'],
+  type: 'official' as TweetCard['type'],
   title: '',
   description: '',
   date: new Date().toISOString().slice(0, 10),
@@ -34,6 +43,8 @@ const closeModal = () => {
 
 const clearForm = () => {
   Object.assign(newTweet, {
+    page: 'tweet',
+    position: 'tweetCard',
     url: '',
     author: '',
     authorHandle: '',
@@ -44,11 +55,18 @@ const clearForm = () => {
   })
 }
 
-const addTweet = () => {
-  const id = newTweet.url.split('/').pop() ?? String(Date.now())
-  store.exhibits.push({ id, ...newTweet })
-  closeModal()
-  clearForm()
+const addTweet = async () => {
+  createRecordLoading.value = true
+  try {
+    await createRecord(newTweet)
+    tweetCard.value.push({ ...newTweet })
+    closeModal()
+    clearForm()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    createRecordLoading.value = false
+  }
 }
 </script>
 
@@ -58,7 +76,7 @@ const addTweet = () => {
       <h1>貼文展廳</h1>
       <div class="filter-buttons">
         <button :class="{ active: filter === 'all' }" @click="filter = 'all'">
-          全部貼文 ({{ store.exhibits.length }})
+          全部貼文 ({{ tweetCard.length }})
         </button>
         <button :class="{ active: filter === 'official' }" @click="filter = 'official'">
           📢 官方公告/互動
@@ -156,7 +174,10 @@ const addTweet = () => {
           <div class="modal-actions">
             <button class="btn-clear" @click="clearForm">清除</button>
             <button class="btn-cancel" @click="closeModal">取消</button>
-            <button class="btn-confirm" @click="addTweet">新增</button>
+            <button class="btn-confirm" :disabled="createRecordLoading" @click="addTweet">
+              <span v-if="createRecordLoading" class="btn-spinner" />
+              {{ createRecordLoading ? '新增中...' : '新增' }}
+            </button>
           </div>
         </div>
       </div>
@@ -301,7 +322,10 @@ const addTweet = () => {
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.15s;
   user-select: none;
 }
 .add-tweet-btn span {
@@ -434,6 +458,9 @@ const addTweet = () => {
   cursor: pointer;
 }
 .btn-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   background: var(--primary-color);
   border: none;
   color: #fff;
@@ -441,5 +468,23 @@ const addTweet = () => {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+}
+.btn-confirm:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

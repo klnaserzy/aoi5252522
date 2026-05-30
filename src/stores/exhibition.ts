@@ -1,23 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-
-export interface ExhibitItem {
-  id: string
-  url: string
-  author: string
-  authorHandle: string
-  type: 'official' | 'artwork' | 'other'
-  title: string
-  description: string
-  date: string
-}
-export interface ExhibitionInfo {
-  title: string
-  concept: string
-  date: string
-  location: string
-  time: string
-}
+import type { TweetCard } from '@/utils/api'
 
 export interface MerchandiseItem {
   id: string
@@ -30,9 +13,11 @@ export interface MerchandiseItem {
 }
 
 export const useExhibitionStore = defineStore('exhibition', () => {
-  const exhibits = ref<ExhibitItem[]>([
+  const exhibits = ref<TweetCard[]>([
     {
-      id: '2058909320495128866',
+      id: 1,
+      page: 'tweet',
+      position: 'tweetCard',
       url: 'https://x.com/AoiHinamori/status/2058909320495128866',
       author: 'Aoi Hinamori 🎀',
       authorHandle: '@AoiHinamori',
@@ -43,7 +28,9 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: '2059092306679288066',
+      id: 2,
+      page: 'tweet',
+      position: 'tweetCard',
       url: 'https://x.com/AoiHinamori/status/2059092306679288066',
       author: 'Aoi Hinamori 🎀',
       authorHandle: '@AoiHinamori',
@@ -54,7 +41,9 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: '2059096643895734771',
+      id: 3,
+      page: 'tweet',
+      position: 'tweetCard',
       url: 'https://x.com/star_2290/status/2059096643895734771',
       author: '筱星朔光 ✦',
       authorHandle: '@star_2290',
@@ -65,7 +54,9 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: '2059490425191428293',
+      id: 4,
+      page: 'tweet',
+      position: 'tweetCard',
       url: 'https://x.com/AoiHinamori/status/2059490425191428293',
       author: 'Aoi Hinamori 🎀',
       authorHandle: '@AoiHinamori',
@@ -76,7 +67,9 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-26',
     },
     {
-      id: '2059532645982441844',
+      id: 5,
+      page: 'tweet',
+      position: 'tweetCard',
       url: 'https://x.com/chocobanadd/status/2059532645982441844',
       author: 'chocobanadd 🍌',
       authorHandle: '@chocobanadd',
@@ -86,16 +79,6 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       date: '2026-05-27',
     },
   ])
-
-  // 實體展覽資訊
-  const info = {
-    title: '《蝕／光》Aoi Hinamori Art Exhibition',
-    concept:
-      '「光曾被吞沒，但從未真正消失」這不只是一場畫展，更是Aoi Hinamori 一路走來的故事！也許你會看見曾經閃閃發亮的她、看見被黑暗吞沒的她、也看見最後那個重新學會與自己和解的她。',
-    date: '2026.06.05 – 2026.06.14',
-    location: '築步苑（台北市萬華區漢中街160號）',
-    time: '11:00 – 18:00',
-  } as ExhibitionInfo
 
   // 直播公開的週邊商品資訊
   const merchandise = [
@@ -170,5 +153,5 @@ export const useExhibitionStore = defineStore('exhibition', () => {
     },
   ] as MerchandiseItem[]
 
-  return { exhibits, info, merchandise }
+  return { exhibits, merchandise }
 })

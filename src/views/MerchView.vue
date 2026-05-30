@@ -1,16 +1,35 @@
 <script setup lang="ts">
 import { useExhibitionStore } from '../stores/exhibition'
+
+interface MerchInfo {
+  title: string
+  concept: string
+  date: string
+  location: string
+  time: string
+}
+
+// 實體展覽資訊
+const MerchInfo = {
+  title: '《蝕／光》Aoi Hinamori Art Exhibition',
+  concept:
+    '「光曾被吞沒，但從未真正消失」這不只是一場畫展，更是Aoi Hinamori 一路走來的故事！也許你會看見曾經閃閃發亮的她、看見被黑暗吞沒的她、也看見最後那個重新學會與自己和解的她。',
+  date: '2026.06.05 – 2026.06.14',
+  location: '築步苑（台北市萬華區漢中街160號）',
+  time: '11:00 – 18:00',
+} as MerchInfo
+
 const store = useExhibitionStore()
 </script>
 
 <template>
   <div class="merch-view">
     <div class="info-banner">
-      <h2>{{ store.info.title }}</h2>
-      <p class="concept">"{{ store.info.concept }}"</p>
+      <h2>{{ MerchInfo.title }}</h2>
+      <p class="concept">"{{ MerchInfo.concept }}"</p>
       <div class="meta-grid">
-        <div><strong>📍 展出地點：</strong>{{ store.info.location }}</div>
-        <div><strong>📆 展出日期：</strong>{{ store.info.date }}</div>
+        <div><strong>📍 展出地點：</strong>{{ MerchInfo.location }}</div>
+        <div><strong>📆 展出日期：</strong>{{ MerchInfo.date }}</div>
       </div>
     </div>
 
