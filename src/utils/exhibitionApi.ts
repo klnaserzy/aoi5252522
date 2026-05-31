@@ -4,7 +4,7 @@ export interface BaseRecord {
   id?: string
   page: string
   position: string
-  hidden?: boolean
+  isHidden: boolean
   updateTime?: string
   updateBy?: string
 }
@@ -61,7 +61,7 @@ export const createRecord = (data: object) => {
 export const updateRecord = (id: string, data: object) => {
   return request({
     url: `/AOI522/${id}`,
-    method: 'patch',
+    method: 'put',
     data,
   })
 }

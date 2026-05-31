@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useMockApi } from '../stores/exhibitionStore'
-import { createRecord } from '@/utils/exhibitionApi'
+import { createRecord, updateRecord } from '@/utils/exhibitionApi'
 import type { TweetCard } from '@/utils/exhibitionApi'
 
 const mockApiStore = useMockApi()
@@ -19,6 +19,41 @@ const filteredItems = computed(() => {
   return tweetCard.value.filter((i) => i.type === 'other')
 })
 
+const revealedIds = ref<Set<string>>(new Set())
+const unhideLoading = ref<string | null>(null)
+const hideLoading = ref<string | null>(null)
+
+const reveal = (id: string) => {
+  revealedIds.value = new Set([...revealedIds.value, id])
+}
+
+const hide = async (item: TweetCard) => {
+  if (!item.id) return
+  hideLoading.value = item.id
+  try {
+    await updateRecord(item.id, { ...item, isHidden: true })
+    await mockApiStore.fetchData()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    hideLoading.value = null
+  }
+}
+
+const unhide = async (item: TweetCard) => {
+  if (!item.id) return
+  unhideLoading.value = item.id
+  try {
+    await updateRecord(item.id, { ...item, isHidden: false })
+    await mockApiStore.fetchData()
+    revealedIds.value.delete(item.id)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    unhideLoading.value = null
+  }
+}
+
 const showModal = ref(false)
 
 const newTweet = ref<TweetCard>({
@@ -30,6 +65,7 @@ const newTweet = ref<TweetCard>({
   type: 'official' as TweetCard['type'],
   title: '',
   description: '',
+  isHidden: false,
   date: new Date().toISOString().slice(0, 10),
 })
 
@@ -51,6 +87,7 @@ const clearForm = () => {
     type: 'official' as TweetCard['type'],
     title: '',
     description: '',
+    isHidden: false,
     date: new Date().toISOString().slice(0, 10),
   }
 }
@@ -111,23 +148,44 @@ const addTweet = async () => {
             <span class="author-tag">{{ item.authorHandle }}</span>
             <span class="type-icon">{{ item.type === 'artwork' ? '🎨 Art' : '💬 Post' }}</span>
           </div>
-
           <div class="frame-content">
             <div class="canvas" :class="item.type">
               <div class="canvas-inner">
                 <p class="art-title">{{ item.title }}</p>
               </div>
             </div>
-
             <div class="frame-details">
               <p class="desc">{{ item.description }}</p>
               <div class="action-bar">
                 <span class="date">{{ item.date }}</span>
-                <span target="_blank" class="link-btn">查看推文 ↗</span>
+                <span class="link-btn">查看推文 ↗</span>
               </div>
             </div>
           </div>
         </a>
+        <!-- 隱藏 -->
+        <div v-if="!item.isHidden" class="hide-bar">
+          <button class="hide-btn" :disabled="hideLoading === item.id" @click.prevent="hide(item)">
+            {{ hideLoading === item.id ? '處理中...' : '內容有誤隱藏此貼文' }}
+          </button>
+        </div>
+
+        <!-- 隱藏遮罩 -->
+        <div v-if="item.isHidden && !revealedIds.has(item.id ?? '')" class="hidden-mask">
+          <p class="mask-label">此資訊有誤，已進行隱藏</p>
+          <div class="mask-actions">
+            <button class="mask-btn reveal-btn" @click.prevent="reveal(item.id ?? '')">
+              查看隱藏內容
+            </button>
+            <button
+              class="mask-btn unhide-btn"
+              :disabled="unhideLoading === item.id"
+              @click.prevent="unhide(item)"
+            >
+              {{ unhideLoading === item.id ? '處理中...' : '取消隱藏' }}
+            </button>
+          </div>
+        </div>
       </div>
       <!-- 推文新增 -->
       <div class="art-frame add-frame" @click="openModal">
@@ -229,6 +287,7 @@ const addTweet = async () => {
   gap: 2rem;
 }
 .art-frame {
+  position: relative;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -356,6 +415,81 @@ const addTweet = async () => {
   transform: translateY(0);
 }
 
+.hide-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.4rem 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+.hide-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+.hide-btn:hover:not(:disabled) {
+  color: #ff5e7e;
+}
+.hide-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hidden-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 13, 20, 0.88);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+.mask-label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.mask-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.mask-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.2s;
+}
+.mask-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.reveal-btn {
+  background: rgba(255, 94, 126, 0.15);
+  border-color: rgba(255, 94, 126, 0.4);
+  color: #ff5e7e;
+}
+.reveal-btn:hover:not(:disabled) {
+  background: rgba(255, 94, 126, 0.28);
+}
+.unhide-btn {
+  background: rgba(100, 116, 139, 0.15);
+  border-color: rgba(100, 116, 139, 0.4);
+  color: #94a3b8;
+}
+.unhide-btn:hover:not(:disabled) {
+  background: rgba(100, 116, 139, 0.28);
+}
 .add-frame {
   cursor: pointer;
   border: 2px dashed var(--border-color);

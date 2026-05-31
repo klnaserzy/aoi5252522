@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { TimelineEvent } from '@/utils/exhibitionApi'
-import { createRecord } from '@/utils/exhibitionApi'
+import { createRecord, updateRecord } from '@/utils/exhibitionApi'
 import { useMockApi } from '../stores/exhibitionStore'
 
 type Year = '2021' | '2022' | '2023' | '2024' | '2025' | '2026'
@@ -55,6 +55,41 @@ const timelineInteracts = ref<TimelineInteract[]>([
 const mockApiStore = useMockApi()
 
 const createEventLoading = ref(false)
+
+const revealedIds = ref<Set<string>>(new Set())
+const hideLoading = ref<string | null>(null)
+const unhideLoading = ref<string | null>(null)
+
+const reveal = (id: string) => {
+  revealedIds.value = new Set([...revealedIds.value, id])
+}
+
+const hide = async (event: TimelineEvent) => {
+  if (!event.id) return
+  hideLoading.value = event.id
+  try {
+    await updateRecord(event.id, { ...event, isHidden: true })
+    await mockApiStore.fetchData()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    hideLoading.value = null
+  }
+}
+
+const unhide = async (event: TimelineEvent) => {
+  if (!event.id) return
+  unhideLoading.value = event.id
+  try {
+    await updateRecord(event.id, { ...event, isHidden: false })
+    await mockApiStore.fetchData()
+    revealedIds.value.delete(event.id)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    unhideLoading.value = null
+  }
+}
 
 const events = computed(() => {
   return mockApiStore.timelineEvent
@@ -129,6 +164,7 @@ const newEvent = ref<TimelineEvent>({
   title: '',
   subtitle: '',
   content: '',
+  isHidden: false,
 })
 
 watch(activeIndex, () => {
@@ -140,6 +176,7 @@ watch(activeIndex, () => {
     title: '',
     subtitle: '',
     content: '',
+    isHidden: false,
   }
 })
 
@@ -152,6 +189,7 @@ const cancelAddEvent = () => {
     title: '',
     subtitle: '',
     content: '',
+    isHidden: false,
   }
 }
 
@@ -219,6 +257,29 @@ const confirmAddEvent = async () => {
               <h3 class="event-title">{{ event.title }}</h3>
               <h4 class="event-subtitle">{{ event.subtitle }}</h4>
               <p class="event-content">{{ event.content }}</p>
+              <!-- 隱藏按鈕 -->
+              <div v-if="!event.isHidden && !revealedIds.has(event.id ?? '')" class="hide-bar">
+                <button class="hide-btn" :disabled="hideLoading === event.id" @click="hide(event)">
+                  {{ hideLoading === event.id ? '處理中...' : '內容有誤隱藏此事件' }}
+                </button>
+              </div>
+            </div>
+
+            <!-- 隱藏遮罩 -->
+            <div v-if="event.isHidden && !revealedIds.has(event.id ?? '')" class="hidden-mask">
+              <p class="mask-label">此資訊有誤，已進行隱藏</p>
+              <div class="mask-actions">
+                <button class="mask-btn reveal-btn" @click="reveal(event.id ?? '')">
+                  查看隱藏內容
+                </button>
+                <button
+                  class="mask-btn unhide-btn"
+                  :disabled="unhideLoading === event.id"
+                  @click="unhide(event)"
+                >
+                  {{ unhideLoading === event.id ? '處理中...' : '取消隱藏' }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -464,8 +525,83 @@ const confirmAddEvent = async () => {
   gap: 1.5rem;
 }
 .event-card {
+  position: relative;
   display: flex;
   gap: 1.25rem;
+}
+.hide-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.4rem 0;
+  border-top: 1px solid var(--border-color);
+}
+.hide-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+.hide-btn:hover:not(:disabled) {
+  color: #ff5e7e;
+}
+.hide-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hidden-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 9, 13, 0.88);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: 1px solid #383838;
+  text-align: center;
+}
+.mask-label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.mask-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.mask-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.2s;
+}
+.mask-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.reveal-btn {
+  background: rgba(255, 94, 126, 0.15);
+  border-color: rgba(255, 94, 126, 0.4);
+  color: #ff5e7e;
+}
+.reveal-btn:hover:not(:disabled) {
+  background: rgba(255, 94, 126, 0.28);
+}
+.unhide-btn {
+  background: rgba(100, 116, 139, 0.15);
+  border-color: rgba(100, 116, 139, 0.4);
+  color: #94a3b8;
+}
+.unhide-btn:hover:not(:disabled) {
+  background: rgba(100, 116, 139, 0.28);
 }
 .event-accent {
   width: 3px;

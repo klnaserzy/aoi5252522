@@ -1,13 +1,48 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { mrtStationsInfo, busStationsInfo } from '@/utils/exhibitionApi'
-import { createRecord } from '@/utils/exhibitionApi'
+import { createRecord, updateRecord } from '@/utils/exhibitionApi'
 import { useMockApi } from '../stores/exhibitionStore'
 
 const mockApiStore = useMockApi()
 
 const createMrtLoading = ref(false)
 const createBusLoading = ref(false)
+
+const revealedIds = ref<Set<string>>(new Set())
+const hideLoading = ref<string | null>(null)
+const unhideLoading = ref<string | null>(null)
+
+const reveal = (id: string) => {
+  revealedIds.value = new Set([...revealedIds.value, id])
+}
+
+const hide = async (item: mrtStationsInfo | busStationsInfo) => {
+  if (!item.id) return
+  hideLoading.value = item.id
+  try {
+    await updateRecord(item.id, { ...item, isHidden: true })
+    await mockApiStore.fetchData()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    hideLoading.value = null
+  }
+}
+
+const unhide = async (item: mrtStationsInfo | busStationsInfo) => {
+  if (!item.id) return
+  unhideLoading.value = item.id
+  try {
+    await updateRecord(item.id, { ...item, isHidden: false })
+    await mockApiStore.fetchData()
+    revealedIds.value.delete(item.id)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    unhideLoading.value = null
+  }
+}
 
 // 實體展出資訊
 const venue = ref({
@@ -29,6 +64,7 @@ const newMrt = ref<mrtStationsInfo>({
   line: '',
   distance: '',
   guide: '',
+  isHidden: false,
 })
 const cancelMrt = () => {
   showAddMrt.value = false
@@ -39,6 +75,7 @@ const cancelMrt = () => {
     line: '',
     distance: '',
     guide: '',
+    isHidden: false,
   }
 }
 const confirmMrt = async () => {
@@ -64,10 +101,18 @@ const newBus = ref<busStationsInfo>({
   name: '',
   buses: '',
   guide: '',
+  isHidden: false,
 })
 const cancelBus = () => {
   showAddBus.value = false
-  newBus.value = { page: 'location', position: 'busStationsInfo', name: '', buses: '', guide: '' }
+  newBus.value = {
+    page: 'location',
+    position: 'busStationsInfo',
+    name: '',
+    buses: '',
+    guide: '',
+    isHidden: false,
+  }
 }
 
 const confirmBus = async () => {
@@ -146,6 +191,28 @@ const busStations = computed(() => {
             </div>
             <p class="distance-text">⏳ {{ mrt.distance }}</p>
             <p class="guide-text">{{ mrt.guide }}</p>
+            <!-- 隱藏按鈕 -->
+            <div v-if="!mrt.isHidden" class="hide-bar">
+              <button class="hide-btn" :disabled="hideLoading === mrt.id" @click="hide(mrt)">
+                {{ hideLoading === mrt.id ? '處理中...' : '內容有誤隱藏此站台' }}
+              </button>
+            </div>
+            <!-- 隱藏遮罩 -->
+            <div v-if="mrt.isHidden && !revealedIds.has(mrt.id ?? '')" class="hidden-mask">
+              <p class="mask-label">此資訊有誤，已進行隱藏</p>
+              <div class="mask-actions">
+                <button class="mask-btn reveal-btn" @click="reveal(mrt.id ?? '')">
+                  查看隱藏內容
+                </button>
+                <button
+                  class="mask-btn unhide-btn"
+                  :disabled="unhideLoading === mrt.id"
+                  @click="unhide(mrt)"
+                >
+                  {{ unhideLoading === mrt.id ? '處理中...' : '取消隱藏' }}
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- 新增捷運指引 -->
@@ -185,6 +252,28 @@ const busStations = computed(() => {
             </div>
             <p class="bus-lines"><strong>停靠線路：</strong>{{ bus.buses }}</p>
             <p class="guide-text">{{ bus.guide }}</p>
+            <!-- 隱藏按鈕 -->
+            <div v-if="!bus.isHidden" class="hide-bar">
+              <button class="hide-btn" :disabled="hideLoading === bus.id" @click="hide(bus)">
+                {{ hideLoading === bus.id ? '處理中...' : '內容有誤隱藏此站台' }}
+              </button>
+            </div>
+            <!-- 隱藏遮罩 -->
+            <div v-if="bus.isHidden && !revealedIds.has(bus.id ?? '')" class="hidden-mask">
+              <p class="mask-label">此資訊有誤，已進行隱藏</p>
+              <div class="mask-actions">
+                <button class="mask-btn reveal-btn" @click="reveal(bus.id ?? '')">
+                  查看隱藏內容
+                </button>
+                <button
+                  class="mask-btn unhide-btn"
+                  :disabled="unhideLoading === bus.id"
+                  @click="unhide(bus)"
+                >
+                  {{ unhideLoading === bus.id ? '處理中...' : '取消隱藏' }}
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- 新增公車指引 -->
@@ -355,11 +444,87 @@ const busStations = computed(() => {
   padding-bottom: 0.5rem;
 }
 .station-card {
+  position: relative;
   background: #140f20;
   border: 1px solid #1f1f2e;
   padding: 1.25rem;
   border-radius: 8px;
   margin-bottom: 1rem;
+  overflow: hidden;
+}
+.hide-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+.hide-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+.hide-btn:hover:not(:disabled) {
+  color: #ff5e7e;
+}
+.hide-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hidden-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 9, 20, 0.9);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 1rem;
+}
+.mask-label {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.mask-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.mask-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s;
+}
+.mask-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.reveal-btn {
+  background: rgba(255, 94, 126, 0.15);
+  border-color: rgba(255, 94, 126, 0.4);
+  color: #ff5e7e;
+}
+.reveal-btn:hover:not(:disabled) {
+  background: rgba(255, 94, 126, 0.28);
+}
+.unhide-btn {
+  background: rgba(100, 116, 139, 0.15);
+  border-color: rgba(100, 116, 139, 0.4);
+  color: #94a3b8;
+}
+.unhide-btn:hover:not(:disabled) {
+  background: rgba(100, 116, 139, 0.28);
 }
 .station-header {
   display: flex;
