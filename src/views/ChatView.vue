@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { useChatStore } from '@/stores/chatStore'
-import { createChatRecord } from '@/utils/chatApi'
+import { createChatRecord, updateChatRecord } from '@/utils/chatApi'
 import type { Message } from '@/utils/chatApi'
 
 const base = import.meta.env.BASE_URL
@@ -16,6 +16,41 @@ const authorName = ref('')
 const inputText = ref('')
 const messageListRef = ref<HTMLElement | null>(null)
 const isSending = ref(false)
+
+const revealedIds = ref<Set<string>>(new Set())
+const hideLoading = ref<string | null>(null)
+const unhideLoading = ref<string | null>(null)
+
+const reveal = (id: string) => {
+  revealedIds.value = new Set([...revealedIds.value, id])
+}
+
+const hide = async (msg: Message) => {
+  if (!msg.id) return
+  hideLoading.value = msg.id
+  try {
+    await updateChatRecord(msg.id, { ...msg, isHidden: true })
+    await chatStore.fetchChatData()
+  } catch (error) {
+    console.error(error)
+  } finally {
+    hideLoading.value = null
+  }
+}
+
+const unhide = async (msg: Message) => {
+  if (!msg.id) return
+  unhideLoading.value = msg.id
+  try {
+    await updateChatRecord(msg.id, { ...msg, isHidden: false })
+    await chatStore.fetchChatData()
+    revealedIds.value.delete(msg.id)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    unhideLoading.value = null
+  }
+}
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -40,6 +75,7 @@ const sendMessage = async () => {
     const message: Message = {
       author: authorName.value,
       content: text,
+      isHidden: false,
       time: getTime(),
     }
 
@@ -88,12 +124,30 @@ onMounted(async () => {
       <div ref="messageListRef" class="message-list">
         <div v-for="msg in messages" :key="msg.id" class="message-row">
           <img :src="avatarImg" class="avatar" alt="" />
-          <div class="bubble-group">
-            <div class="msg-meta">
-              <span class="msg-author">{{ msg.author }}</span>
-              <span class="msg-time">{{ msg.time }}</span>
+          <div class="bubble-wrap">
+            <div class="bubble-group">
+              <div class="msg-meta">
+                <span class="msg-author">{{ msg.author }}</span>
+                <span class="msg-time">{{ msg.time }}</span>
+              </div>
+              <div class="bubble">{{ msg.content }}</div>
             </div>
-            <div class="bubble">{{ msg.content }}</div>
+            <!-- 隱藏遮罩 -->
+            <div v-if="msg.isHidden && !revealedIds.has(msg.id ?? '')" class="hidden-mask">
+              <p class="mask-label">此訊息已隱藏</p>
+              <div class="mask-actions">
+                <button class="mask-btn reveal-btn" @click="reveal(msg.id ?? '')">查看隱藏內容</button>
+                <button class="mask-btn unhide-btn" :disabled="unhideLoading === msg.id" @click="unhide(msg)">
+                  {{ unhideLoading === msg.id ? '處理中...' : '取消隱藏' }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- 隱藏按鈕 -->
+          <div v-if="!msg.isHidden" class="hide-bar">
+            <button class="hide-btn" :disabled="hideLoading === msg.id" @click="hide(msg)">
+              {{ hideLoading === msg.id ? '...' : '隱藏' }}
+            </button>
           </div>
         </div>
       </div>
@@ -231,11 +285,90 @@ onMounted(async () => {
   flex-shrink: 0;
 }
 
+.bubble-wrap {
+  position: relative;
+  max-width: 68%;
+  flex: 1;
+}
 .bubble-group {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  max-width: 68%;
+}
+.hide-bar {
+  margin-left: auto;
+  align-self: flex-start;
+  padding-top: 0.2rem;
+}
+.hide-btn {
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.hide-btn:hover:not(:disabled) {
+  color: #ff5e7e;
+}
+.hide-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hidden-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 13, 20, 0.9);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 4px 12px 12px 12px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+.mask-label {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  margin: 0;
+}
+.mask-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.mask-btn {
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s;
+}
+.mask-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.reveal-btn {
+  background: rgba(255, 94, 126, 0.15);
+  border-color: rgba(255, 94, 126, 0.4);
+  color: #ff5e7e;
+}
+.reveal-btn:hover:not(:disabled) {
+  background: rgba(255, 94, 126, 0.28);
+}
+.unhide-btn {
+  background: rgba(100, 116, 139, 0.15);
+  border-color: rgba(100, 116, 139, 0.4);
+  color: #94a3b8;
+}
+.unhide-btn:hover:not(:disabled) {
+  background: rgba(100, 116, 139, 0.28);
 }
 
 .msg-meta {

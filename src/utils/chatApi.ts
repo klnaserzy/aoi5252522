@@ -22,3 +22,11 @@ export const createChatRecord = (data: object) => {
     data,
   })
 }
+
+export const updateChatRecord = (id: string, data: object) => {
+  return request({
+    url: `/chat/${id}`,
+    method: 'put',
+    data,
+  })
+}
