@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useMockApi } from '../stores/mockApi'
-import { createRecord } from '@/utils/api'
-import type { TweetCard } from '@/utils/api'
+import { useMockApi } from '../stores/exhibitionStore'
+import { createRecord } from '@/utils/exhibitionApi'
+import type { TweetCard } from '@/utils/exhibitionApi'
 
 const mockApiStore = useMockApi()
 

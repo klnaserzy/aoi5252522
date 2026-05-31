@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { TweetCard } from '@/utils/api'
+import type { TweetCard } from '@/utils/exhibitionApi'
 
 export interface MerchandiseItem {
   id: string

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AoiAvatar from '@/components/AoiAvatar.vue'
 import TimelineSection from '../components/TimelineSection.vue'
 </script>
 
@@ -6,7 +7,9 @@ import TimelineSection from '../components/TimelineSection.vue'
   <div class="about-container">
     <a href="https://x.com/AoiHinamori" target="_blank">
       <div class="profile-card">
-        <div class="avatar">🩸</div>
+        <div class="avatar">
+          <AoiAvatar />
+        </div>
         <div class="info">
           <h2>Aoi Hinamori (阿歐依)</h2>
           <p class="subtitle">個人勢虛擬 VTuber / 吸血鬼護士</p>
@@ -51,9 +54,12 @@ import TimelineSection from '../components/TimelineSection.vue'
   background: rgba(255, 77, 109, 0.1);
   width: 80px;
   height: 80px;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 .info h2 {
   margin: 0;
@@ -91,6 +97,7 @@ import TimelineSection from '../components/TimelineSection.vue'
     font-size: 2.5rem;
     width: 60px;
     height: 60px;
+    flex-shrink: 0;
   }
   .profile-card {
     padding: 1.5rem;

@@ -1,4 +1,4 @@
-import request from '@/utils/mockApi'
+import request from '@/utils/mockRequest'
 
 export interface BaseRecord {
   id?: string

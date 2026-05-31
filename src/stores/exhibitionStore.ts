@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia'
-import { getRecords } from '@/utils/api'
+import { getRecords } from '@/utils/exhibitionApi'
 import { ref, computed } from 'vue'
-import type { TweetCard, TimelineEvent, mrtStationsInfo, busStationsInfo } from '@/utils/api'
+import type {
+  TweetCard,
+  TimelineEvent,
+  mrtStationsInfo,
+  busStationsInfo,
+} from '@/utils/exhibitionApi'
 
 export const useMockApi = defineStore('mockApi', () => {
   const mockApiData = ref<TweetCard[] | TimelineEvent[] | mrtStationsInfo[] | busStationsInfo[]>([])

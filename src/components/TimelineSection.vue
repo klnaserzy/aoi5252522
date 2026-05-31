@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { TimelineEvent } from '@/utils/api'
-import { createRecord } from '@/utils/api'
-import { useMockApi } from '../stores/mockApi'
+import type { TimelineEvent } from '@/utils/exhibitionApi'
+import { createRecord } from '@/utils/exhibitionApi'
+import { useMockApi } from '../stores/exhibitionStore'
 
 type Year = '2021' | '2022' | '2023' | '2024' | '2025' | '2026'
 
@@ -238,7 +238,9 @@ const confirmAddEvent = async () => {
               placeholder="詳細敘述..."
             />
             <div class="add-form-actions">
-              <button class="add-cancel" :disabled="createEventLoading" @click="cancelAddEvent">取消</button>
+              <button class="add-cancel" :disabled="createEventLoading" @click="cancelAddEvent">
+                取消
+              </button>
               <button class="add-confirm" :disabled="createEventLoading" @click="confirmAddEvent">
                 <span v-if="createEventLoading" class="btn-spinner" />
                 {{ createEventLoading ? '新增中...' : '新增' }}
@@ -623,7 +625,9 @@ const confirmAddEvent = async () => {
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .add-confirm:hover {
   background: #4b5563;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { mrtStationsInfo, busStationsInfo } from '@/utils/api'
-import { createRecord } from '@/utils/api'
-import { useMockApi } from '../stores/mockApi'
+import type { mrtStationsInfo, busStationsInfo } from '@/utils/exhibitionApi'
+import { createRecord } from '@/utils/exhibitionApi'
+import { useMockApi } from '../stores/exhibitionStore'
 
 const mockApiStore = useMockApi()
 
@@ -164,7 +164,9 @@ const busStations = computed(() => {
                 placeholder="指引說明..."
               />
               <div class="add-station-actions">
-                <button class="s-cancel" :disabled="createMrtLoading" @click="cancelMrt">取消</button>
+                <button class="s-cancel" :disabled="createMrtLoading" @click="cancelMrt">
+                  取消
+                </button>
                 <button class="s-confirm" :disabled="createMrtLoading" @click="confirmMrt">
                   <span v-if="createMrtLoading" class="btn-spinner" />
                   {{ createMrtLoading ? '新增中...' : '新增' }}
@@ -200,7 +202,9 @@ const busStations = computed(() => {
                 placeholder="指引說明..."
               />
               <div class="add-station-actions">
-                <button class="s-cancel" :disabled="createBusLoading" @click="cancelBus">取消</button>
+                <button class="s-cancel" :disabled="createBusLoading" @click="cancelBus">
+                  取消
+                </button>
                 <button class="s-confirm" :disabled="createBusLoading" @click="confirmBus">
                   <span v-if="createBusLoading" class="btn-spinner" />
                   {{ createBusLoading ? '新增中...' : '新增' }}
@@ -509,6 +513,8 @@ const busStations = computed(() => {
   animation: spin 0.7s linear infinite;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

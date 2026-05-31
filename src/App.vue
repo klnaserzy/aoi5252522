@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import AoiAvatar from '@/components/AoiAvatar.vue'
 import headerLinks from '@/constants/headerLinks'
-import { useMockApi } from '@/stores/mockApi'
+import { useMockApi } from '@/stores/exhibitionStore'
 import { useChatStore } from '@/stores/chatStore'
 
 const mockApiStore = useMockApi()
@@ -45,7 +46,7 @@ onMounted(() => {
       </div>
 
       <RouterLink to="/" class="logo">
-        <span class="logo-icon">🩸</span>
+        <span class="logo-icon"><AoiAvatar /></span>
         <span class="logo-text">AOI GALLERY</span>
       </RouterLink>
       <nav class="desktop-nav-links">
@@ -100,6 +101,13 @@ onMounted(() => {
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--primary-color);
+}
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 .desktop-nav-links {
   display: flex;
