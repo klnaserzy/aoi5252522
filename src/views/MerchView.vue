@@ -99,15 +99,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
         </div>
       </div>
     </div>
+    <!-- Lightbox -->
+    <Teleport to="body">
+      <div v-if="lightboxImg" class="lightbox-overlay" @click.self="closeLightbox">
+        <button class="lightbox-close" @click="closeLightbox">✕</button>
+        <img :src="lightboxImg.src" :alt="lightboxImg.alt" class="lightbox-img" />
+      </div>
+    </Teleport>
   </div>
-
-  <!-- Lightbox -->
-  <Teleport to="body">
-    <div v-if="lightboxImg" class="lightbox-overlay" @click.self="closeLightbox">
-      <button class="lightbox-close" @click="closeLightbox">✕</button>
-      <img :src="lightboxImg.src" :alt="lightboxImg.alt" class="lightbox-img" />
-    </div>
-  </Teleport>
 </template>
 
 <style scoped>
@@ -347,8 +346,12 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   animation: fadeIn 0.18s ease;
 }
 @keyframes fadeIn {
-  from { opacity: 0 }
-  to   { opacity: 1 }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .lightbox-img {
   max-width: 90vw;
@@ -359,8 +362,14 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes scaleIn {
-  from { transform: scale(0.92); opacity: 0 }
-  to   { transform: scale(1);    opacity: 1 }
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 .lightbox-close {
   position: fixed;
