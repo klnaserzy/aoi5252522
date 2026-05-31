@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useExhibitionStore } from '../stores/exhibitionHardCode'
 
 interface MerchInfo {
@@ -9,7 +10,6 @@ interface MerchInfo {
   time: string
 }
 
-// 實體展覽資訊
 const MerchInfo = {
   title: '《蝕／光》Aoi Hinamori Art Exhibition',
   concept:
@@ -20,6 +20,8 @@ const MerchInfo = {
 } as MerchInfo
 
 const store = useExhibitionStore()
+const onSiteItems = computed(() => store.merchandise.filter((m) => m.type === 'onSite'))
+const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 'preOrder'))
 </script>
 
 <template>
@@ -33,10 +35,11 @@ const store = useExhibitionStore()
       </div>
     </div>
 
-    <h3>🛒 5週年特展限定週邊</h3>
+    <!-- 現場販售 -->
+    <h3>🛒 現場販售週邊</h3>
     <div class="merch-grid">
       <div
-        v-for="item in store.merchandise"
+        v-for="item in onSiteItems"
         :key="item.id"
         class="merch-card"
         :class="{ 'premium-border': item.category === 'premium' }"
@@ -47,9 +50,38 @@ const store = useExhibitionStore()
         </div>
         <div class="merch-info">
           <h4>{{ item.name }}</h4>
-          <p class="spec" v-if="item.spec">{{ item.spec }}</p>
+          <p v-if="item.spec" class="spec">{{ item.spec }}</p>
           <p class="desc">{{ item.description }}</p>
-          <div class="price-tag">NT$ {{ item.price.toLocaleString() }}</div>
+          <p v-if="item.limitNote" class="limit-note">⚠ {{ item.limitNote }}</p>
+          <div class="price-tag">
+            {{ item.priceNote ?? `NT$ ${item.price.toLocaleString()}` }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 預購商品 -->
+    <h3 class="section-preorder">📦 預購商品</h3>
+    <div class="merch-grid">
+      <div
+        v-for="item in preOrderItems"
+        :key="item.id"
+        class="merch-card"
+        :class="{ 'premium-border': item.category === 'premium' }"
+      >
+        <div class="preorder-badge">PRE-ORDER</div>
+        <div v-if="item.isLimited" class="limit-badge limit-badge--right">LTD 限量</div>
+        <div class="merch-photo-placeholder">
+          <span>{{ item.name }}</span>
+        </div>
+        <div class="merch-info">
+          <h4>{{ item.name }}</h4>
+          <p v-if="item.spec" class="spec">{{ item.spec }}</p>
+          <p class="desc">{{ item.description }}</p>
+          <p v-if="item.limitNote" class="limit-note">⚠ {{ item.limitNote }}</p>
+          <div class="price-tag">
+            {{ item.priceNote ?? `NT$ ${item.price.toLocaleString()}` }}
+          </div>
         </div>
       </div>
     </div>
@@ -242,6 +274,41 @@ const store = useExhibitionStore()
   color: #ff5e7e;
   margin-top: auto; /* 核心對齊設定 */
   letter-spacing: 0.5px;
+}
+
+/* 預購區段標題間距 */
+.section-preorder {
+  margin-top: 3.5rem;
+}
+
+/* 預購標籤 */
+.preorder-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  z-index: 10;
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* 限量標籤靠右版（與預購標籤共存時） */
+.limit-badge--right {
+  left: auto;
+  right: 12px;
+}
+
+/* 限購備註文字 */
+.limit-note {
+  font-size: 0.72rem;
+  color: #f59e0b;
+  margin: 0 0 0.6rem 0;
+  line-height: 1.4;
 }
 
 /* ==========================================================================

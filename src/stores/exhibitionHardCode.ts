@@ -1,90 +1,216 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { TweetCard } from '@/utils/exhibitionApi'
 
 export interface MerchandiseItem {
   id: string
   name: string
   price: number
+  priceNote?: string
+  type: 'onSite' | 'preOrder'
   category: 'standard' | 'premium' | 'apparel'
   spec?: string
   isLimited: boolean
+  limitNote?: string
   description: string
 }
 
 export const useExhibitionStore = defineStore('exhibition', () => {
-  // 直播公開的週邊商品資訊
-  const merchandise = [
+  const merchandise: MerchandiseItem[] = [
+    // ── 現場販售 ──────────────────────────────────
     {
       id: 'm1',
-      name: '手工皮革旅行袋',
-      price: 35000,
-      category: 'premium',
-      spec: '師傅純手工製作，真牛皮皮革搭配滿版內裡設計',
+      name: '極光色立牌',
+      price: 500,
+      type: 'onSite',
+      category: 'standard',
       isLimited: true,
-      description: '極限量販售！可收納約兩天一夜換洗衣物，內裡布滿滿的 Aoi 元素細節。',
+      limitNote: '6/5～6/7 每人限購一份',
+      description: '採用特殊極光鍍膜，不同角度折射出夢幻光影。',
     },
     {
       id: 'm2',
-      name: 'LAHEE 紀念項鍊',
-      price: 4000,
-      category: 'premium',
-      spec: '項鍊附收納小袋、精美包裝盒',
-      isLimited: false,
-      description: '極具紀念價值的信仰飾品。',
+      name: '雙層壓克力畫版',
+      price: 800,
+      type: 'onSite',
+      category: 'standard',
+      isLimited: true,
+      limitNote: '6/5～6/7 每人限購一份',
+      description: '雙層壓克力工藝，立體呈現展覽核心視覺。',
     },
     {
       id: 'm3',
-      name: '蝕光鋁板畫',
+      name: '蝕光 鉛板畫',
       price: 3500,
+      type: 'onSite',
       category: 'premium',
-      spec: 'A3 尺寸 / 附精美包裝',
-      isLimited: false,
-      description: '將本次展覽核心視覺以最高規格的鋁板畫永久典藏。',
+      spec: 'A3 尺寸',
+      isLimited: true,
+      limitNote: '6/5～6/7 每人限購一份',
+      description: '將本次展覽核心視覺以最高規格的鉛板畫永久典藏。',
     },
     {
       id: 'm4',
       name: '豪華套裝親簽名板',
       price: 1700,
-      category: 'standard',
+      type: 'onSite',
+      category: 'premium',
       isLimited: true,
-      description: '包含 Aoi 親筆簽名的極珍貴收藏。',
+      limitNote: '購買本產品請洽櫃台，每人限購一份',
+      description: '包含 Aoi 親筆簽名的極珍貴收藏套裝。',
     },
     {
       id: 'm5',
-      name: '塊狀秋葵',
-      price: 1500,
+      name: '透明應援扇子',
+      price: 100,
+      type: 'onSite',
       category: 'standard',
       isLimited: false,
-      description: '直播掀起話題的粉絲迷因實體化商品！',
+      description: '現場應援必備，輕巧透明設計。',
     },
     {
       id: 'm6',
+      name: '雙層壓克力鑰匙圈',
+      price: 200,
+      type: 'onSite',
+      category: 'standard',
+      isLimited: true,
+      limitNote: '6/5～6/7 每人限購一份',
+      description: '雙層壓克力工藝，隨身攜帶的應援小物。',
+    },
+    {
+      id: 'm7',
+      name: '蝕光明信片套組 + PVC包裝',
+      price: 300,
+      type: 'onSite',
+      category: 'standard',
+      isLimited: true,
+      limitNote: '6/5～6/7 每人限購一份',
+      description: '收錄展覽精選圖稿的明信片套組，附 PVC 精美外包裝。',
+    },
+    {
+      id: 'm8',
+      name: '塊狀秋葵',
+      price: 1500,
+      type: 'onSite',
+      category: 'standard',
+      isLimited: true,
+      limitNote: '6/5～6/7 每人限購一份',
+      description: '直播掀起話題的粉絲迷因正式實體化！',
+    },
+    {
+      id: 'm9',
       name: "Aoi's Diary 原創漫畫",
       price: 550,
+      type: 'onSite',
       category: 'standard',
-      spec: '附 A3 海報一張',
+      spec: '贈 A3 海報一張',
       isLimited: false,
       description: '收錄 Aoi 日常與心路歷程的原創漫畫冊。',
     },
     {
-      id: 'm7',
+      id: 'm10',
+      name: '夏日風 TCG 卡套（雙尺寸）',
+      price: 600,
+      priceNote: '每款 600 元，一組 64 張',
+      type: 'onSite',
+      category: 'standard',
+      isLimited: false,
+      description: '提供雙種尺寸規格，讓你的牌組穿上 Aoi 的夏日外衣。',
+    },
+    {
+      id: 'm11',
+      name: '沁涼一夏 B5 卡冊',
+      price: 700,
+      type: 'onSite',
+      category: 'standard',
+      spec: 'B5 尺寸',
+      isLimited: false,
+      description: '夏日主題設計，收納你的珍藏卡片。',
+    },
+    {
+      id: 'm12',
+      name: 'AOI 緞面眼罩套組',
+      price: 700,
+      type: 'onSite',
+      category: 'standard',
+      isLimited: false,
+      description: '柔順緞面材質，讓你每晚都能沉浸在 Aoi 的世界。',
+    },
+    {
+      id: 'm13',
+      name: '熱情夏日 萬用墊',
+      price: 1000,
+      type: 'onSite',
+      category: 'standard',
+      spec: '尺寸：60 × 30 cm',
+      isLimited: false,
+      description: '大尺寸多用途桌墊，展覽視覺完整呈現。',
+    },
+    {
+      id: 'm14',
+      name: '隨機徽章',
+      price: 150,
+      priceNote: '每款 150 元，共 6 款圖案',
+      type: 'onSite',
+      category: 'standard',
+      spec: '尺寸：5.7 cm',
+      isLimited: false,
+      description: '共 6 款圖案隨機出貨，集齊全系列解鎖成就！',
+    },
+    {
+      id: 'm15',
       name: '患者絨毛徽章套 + LED發光徽章組',
       price: 600,
+      type: 'onSite',
       category: 'standard',
       spec: '內附電池',
       isLimited: false,
       description: '讓你在應援場地所到之處無不驚艷。',
     },
+
+    // ── 預購商品 ──────────────────────────────────
     {
-      id: 'm8',
-      name: '極光色立牌',
-      price: 500,
-      category: 'standard',
+      id: 'p1',
+      name: 'LAHEE 紀念項鍊',
+      price: 4000,
+      type: 'preOrder',
+      category: 'premium',
+      spec: '項鍊附收納小袋、盒',
       isLimited: false,
-      description: '採用特殊極光鍍膜，不同角度折射出夢幻光影。',
+      description: '極具紀念價值的信仰飾品，附精美收納包裝。',
     },
-  ] as MerchandiseItem[]
+    {
+      id: 'p2',
+      name: '蝕光 鉛板畫（預購版）',
+      price: 3500,
+      type: 'preOrder',
+      category: 'premium',
+      spec: 'A3 尺寸 / 附精美包裝',
+      isLimited: false,
+      description: '預購版附贈精美包裝，適合典藏與收禮。',
+    },
+    {
+      id: 'p3',
+      name: '手工皮革旅行袋',
+      price: 35000,
+      type: 'preOrder',
+      category: 'premium',
+      spec: '師傅純手工製作，養牛皮皮革搭配滿版印裏設計',
+      isLimited: true,
+      limitNote: '限量販售',
+      description: '可收納兩天一夜換洗衣物，內裡布滿 Aoi 元素細節。',
+    },
+    {
+      id: 'p4',
+      name: 'AOI 隨機卡片包',
+      price: 150,
+      priceNote: '每包 150 元，一包 4 張',
+      type: 'preOrder',
+      category: 'standard',
+      spec: '共 50 款圖案',
+      isLimited: false,
+      description: '50 款圖案隨機組合，抽到心儀卡面是一大樂趣！',
+    },
+  ]
 
   return { merchandise }
 })
