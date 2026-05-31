@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
 
+const base = import.meta.env.BASE_URL
+
 export interface MerchandiseItem {
   id: string
   name: string
+  img: string
   price: number
   priceNote?: string
   type: 'onSite' | 'preOrder'
@@ -19,6 +22,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
     {
       id: 'm1',
       name: '極光色立牌',
+      img: `${base}極光色立牌.png`,
       price: 500,
       type: 'onSite',
       category: 'standard',
@@ -35,17 +39,19 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       isLimited: true,
       limitNote: '6/5～6/7 每人限購一份',
       description: '雙層壓克力工藝，立體呈現展覽核心視覺。',
+      img: `${base}雙層壓克力畫版.png`,
     },
     {
       id: 'm3',
-      name: '蝕光 鉛板畫',
+      name: '蝕光 鋁板畫',
       price: 3500,
       type: 'onSite',
       category: 'premium',
       spec: 'A3 尺寸',
       isLimited: true,
       limitNote: '6/5～6/7 每人限購一份',
-      description: '將本次展覽核心視覺以最高規格的鉛板畫永久典藏。',
+      description: '將本次展覽核心視覺以最高規格的鋁板畫永久典藏。',
+      img: `${base}鋁板畫.png`,
     },
     {
       id: 'm4',
@@ -56,6 +62,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       isLimited: true,
       limitNote: '購買本產品請洽櫃台，每人限購一份',
       description: '包含 Aoi 親筆簽名的極珍貴收藏套裝。',
+      img: `${base}豪華套裝親簽名板.png`,
     },
     {
       id: 'm5',
@@ -65,6 +72,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       category: 'standard',
       isLimited: false,
       description: '現場應援必備，輕巧透明設計。',
+      img: `${base}透明應援扇子.png`,
     },
     {
       id: 'm6',
@@ -75,6 +83,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       isLimited: true,
       limitNote: '6/5～6/7 每人限購一份',
       description: '雙層壓克力工藝，隨身攜帶的應援小物。',
+      img: `${base}雙層壓克力鑰匙圈.png`,
     },
     {
       id: 'm7',
@@ -85,6 +94,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       isLimited: true,
       limitNote: '6/5～6/7 每人限購一份',
       description: '收錄展覽精選圖稿的明信片套組，附 PVC 精美外包裝。',
+      img: `${base}明信片套組＋PVC包裝.png`,
     },
     {
       id: 'm8',
@@ -95,6 +105,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       isLimited: true,
       limitNote: '6/5～6/7 每人限購一份',
       description: '直播掀起話題的粉絲迷因正式實體化！',
+      img: `${base}塊狀秋葵.png`,
     },
     {
       id: 'm9',
@@ -105,6 +116,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: '贈 A3 海報一張',
       isLimited: false,
       description: '收錄 Aoi 日常與心路歷程的原創漫畫冊。',
+      img: `${base}原創漫畫.png`,
     },
     {
       id: 'm10',
@@ -115,6 +127,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       category: 'standard',
       isLimited: false,
       description: '提供雙種尺寸規格，讓你的牌組穿上 Aoi 的夏日外衣。',
+      img: `${base}夏日風TCG卡套.png`,
     },
     {
       id: 'm11',
@@ -125,6 +138,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: 'B5 尺寸',
       isLimited: false,
       description: '夏日主題設計，收納你的珍藏卡片。',
+      img: `${base}B5卡冊.png`,
     },
     {
       id: 'm12',
@@ -134,6 +148,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       category: 'standard',
       isLimited: false,
       description: '柔順緞面材質，讓你每晚都能沉浸在 Aoi 的世界。',
+      img: `${base}眼罩套組.png`,
     },
     {
       id: 'm13',
@@ -144,6 +159,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: '尺寸：60 × 30 cm',
       isLimited: false,
       description: '大尺寸多用途桌墊，展覽視覺完整呈現。',
+      img: `${base}萬用墊.png`,
     },
     {
       id: 'm14',
@@ -155,6 +171,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: '尺寸：5.7 cm',
       isLimited: false,
       description: '共 6 款圖案隨機出貨，集齊全系列解鎖成就！',
+      img: `${base}隨機徽章.png`,
     },
     {
       id: 'm15',
@@ -165,6 +182,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: '內附電池',
       isLimited: false,
       description: '讓你在應援場地所到之處無不驚艷。',
+      img: `${base}徽章套＋發光徽章組.png`,
     },
 
     // ── 預購商品 ──────────────────────────────────
@@ -177,6 +195,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: '項鍊附收納小袋、盒',
       isLimited: false,
       description: '極具紀念價值的信仰飾品，附精美收納包裝。',
+      img: `${base}LAHEE.png`,
     },
     {
       id: 'p2',
@@ -187,6 +206,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: 'A3 尺寸 / 附精美包裝',
       isLimited: false,
       description: '預購版附贈精美包裝，適合典藏與收禮。',
+      img: `${base}鋁板畫.png`,
     },
     {
       id: 'p3',
@@ -198,6 +218,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       isLimited: true,
       limitNote: '限量販售',
       description: '可收納兩天一夜換洗衣物，內裡布滿 Aoi 元素細節。',
+      img: `${base}手工皮革旅行袋.png`,
     },
     {
       id: 'p4',
@@ -209,6 +230,7 @@ export const useExhibitionStore = defineStore('exhibition', () => {
       spec: '共 50 款圖案',
       isLimited: false,
       description: '50 款圖案隨機組合，抽到心儀卡面是一大樂趣！',
+      img: `${base}隨機卡片包.png`,
     },
   ]
 

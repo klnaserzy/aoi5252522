@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useExhibitionStore } from '../stores/exhibitionHardCode'
 
 interface MerchInfo {
@@ -22,6 +22,20 @@ const MerchInfo = {
 const store = useExhibitionStore()
 const onSiteItems = computed(() => store.merchandise.filter((m) => m.type === 'onSite'))
 const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 'preOrder'))
+
+const lightboxImg = ref<{ src: string; alt: string } | null>(null)
+
+const openLightbox = (src: string, alt: string) => {
+  lightboxImg.value = { src, alt }
+}
+const closeLightbox = () => {
+  lightboxImg.value = null
+}
+const onKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') closeLightbox()
+}
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
@@ -45,8 +59,8 @@ const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 
         :class="{ 'premium-border': item.category === 'premium' }"
       >
         <div v-if="item.isLimited" class="limit-badge">LTD 限量</div>
-        <div class="merch-photo-placeholder">
-          <span>{{ item.name }}</span>
+        <div class="merch-photo-placeholder" @click="openLightbox(item.img, item.name)">
+          <img :src="item.img" :alt="item.name" class="merch-img" />
         </div>
         <div class="merch-info">
           <h4>{{ item.name }}</h4>
@@ -71,8 +85,8 @@ const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 
       >
         <div class="preorder-badge">PRE-ORDER</div>
         <div v-if="item.isLimited" class="limit-badge limit-badge--right">LTD 限量</div>
-        <div class="merch-photo-placeholder">
-          <span>{{ item.name }}</span>
+        <div class="merch-photo-placeholder" @click="openLightbox(item.img, item.name)">
+          <img :src="item.img" :alt="item.name" class="merch-img" />
         </div>
         <div class="merch-info">
           <h4>{{ item.name }}</h4>
@@ -86,6 +100,14 @@ const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 
       </div>
     </div>
   </div>
+
+  <!-- Lightbox -->
+  <Teleport to="body">
+    <div v-if="lightboxImg" class="lightbox-overlay" @click.self="closeLightbox">
+      <button class="lightbox-close" @click="closeLightbox">✕</button>
+      <img :src="lightboxImg.src" :alt="lightboxImg.alt" class="lightbox-img" />
+    </div>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -215,16 +237,11 @@ const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 
   box-sizing: border-box;
   border-bottom: 1px solid #1f1f2e;
 }
-.merch-photo-placeholder span {
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-align: center;
-  word-break: break-all;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.merch-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* 商品文字資訊區佈局 */
@@ -309,6 +326,61 @@ const preOrderItems = computed(() => store.merchandise.filter((m) => m.type === 
   color: #f59e0b;
   margin: 0 0 0.6rem 0;
   line-height: 1.4;
+}
+
+/* 圖片區塊加上可點擊提示 */
+.merch-photo-placeholder {
+  cursor: zoom-in;
+}
+
+/* Lightbox */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.18s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to   { opacity: 1 }
+}
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes scaleIn {
+  from { transform: scale(0.92); opacity: 0 }
+  to   { transform: scale(1);    opacity: 1 }
+}
+.lightbox-close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1.1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.lightbox-close:hover {
+  background: rgba(255, 94, 126, 0.4);
 }
 
 /* ==========================================================================
