@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useExhibitionStore } from '../stores/exhibition'
+import { useExhibitionStore } from '../stores/exhibitionHardCode'
 
 interface MerchInfo {
   title: string
