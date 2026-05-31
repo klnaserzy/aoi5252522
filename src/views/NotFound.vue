@@ -6,11 +6,15 @@ const base = import.meta.env.BASE_URL
 const IMAGE_PATH = {
   aoiHungry: `${base}aoi-hungry.png`,
   aoiFed: `${base}aoi-linepay.jpg`,
+  giveAoiMealExpenses: `${base}give-aoi-meal-expenses.png`,
 }
+
+const aoiFedSrc = ref([IMAGE_PATH.aoiFed, IMAGE_PATH.giveAoiMealExpenses])
+const aoiFedIndex = ref(Math.floor(Math.random() * aoiFedSrc.value.length))
 
 const fed = ref(false)
 const shaking = ref(false)
-const zoomedSrc = ref('')
+const zoomedSrc = ref<string | undefined>('')
 
 function feedAoi() {
   if (fed.value) return
@@ -41,8 +45,8 @@ function feedAoi() {
       <Transition name="fade-up">
         <div v-if="fed" class="pay-area">
           <p class="pay-label">謝謝你餵 AOI 吃飽飽！ 🎀</p>
-          <div class="qr-wrap" @click="zoomedSrc = IMAGE_PATH.aoiFed">
-            <img :src="IMAGE_PATH.aoiFed" alt="LINE Pay QR" class="qr-img" />
+          <div class="qr-wrap" @click="zoomedSrc = aoiFedSrc[aoiFedIndex]">
+            <img :src="aoiFedSrc[aoiFedIndex]" alt="LINE Pay QR" class="qr-img" />
             <div class="zoom-hint">🔍</div>
           </div>
           <p class="pay-hint">掃描即可完成餵飯儀式</p>
