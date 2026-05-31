@@ -18,6 +18,27 @@ const router = useRouter()
       </div>
     </section>
 
+    <!-- 魂太大佬的網站導向 -->
+    <section class="redirect-section">
+      <div class="redirect-card">
+        <div class="redirect-left">
+          <span class="redirect-icon">🎨</span>
+          <div>
+            <h3 class="redirect-title">前往完整畫展網站</h3>
+            <p class="redirect-desc">AOI Literature Club 製作，收錄全部展品與活動資訊</p>
+            <p class="redirect-desc">魂太大大aka寅時戰神aka叛徒(參考熊爺提供的稱號)</p>
+          </div>
+        </div>
+        <a
+          href="https://aoliterature-club.github.io/AoiHinamoriArtExhibition/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="redirect-btn"
+          >前往觀展 ↗</a
+        >
+      </div>
+    </section>
+
     <section class="featured">
       <h2 class="section-title">✦ 最新展覽焦點 ✦</h2>
       <div class="announcement-card">
@@ -156,6 +177,68 @@ const router = useRouter()
 .x-link {
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+.redirect-section {
+  margin-bottom: 3rem;
+}
+.redirect-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 77, 109, 0.08) 0%, rgba(17, 17, 21, 0) 100%);
+  border: 1px solid rgba(255, 77, 109, 0.3);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+}
+.redirect-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.redirect-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+.redirect-title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.redirect-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.redirect-btn {
+  flex-shrink: 0;
+  background: var(--primary-color);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.redirect-btn:hover {
+  background: var(--accent-color);
+}
+
+@media (max-width: 640px) {
+  .redirect-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .redirect-btn {
+    align-self: stretch;
+    text-align: center;
+  }
 }
 
 @media (max-width: 640px) {
