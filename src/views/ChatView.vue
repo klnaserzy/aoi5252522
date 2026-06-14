@@ -1,15 +1,41 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue'
-import { useChatStore } from '@/stores/chatStore'
-import { createChatRecord, updateChatRecord } from '@/utils/chatApi'
 import type { Message } from '@/utils/chatApi'
 
 const base = import.meta.env.BASE_URL
-const chatStore = useChatStore()
 const avatarImg = `${base}chickensKnowAOIIsHungry.png`
 
 const messages = computed<Message[]>(() => {
-  return chatStore.chatMessage
+  return [
+    {
+      id: '1',
+      author: 'aoi 5252522',
+      content: 'hungry',
+      time: '2026-05-30 17:57',
+      isHidden: false,
+    },
+    {
+      id: '2',
+      author: '',
+      content: '測試 測試 馬鈴薯',
+      isHidden: false,
+      time: '2026-06-04 17:39',
+    },
+    {
+      id: '3',
+      author: 'Kalin風凜魂太',
+      content: '我路過，酷欸',
+      isHidden: false,
+      time: '2026-06-05 20:23',
+    },
+    {
+      id: '4',
+      author: '',
+      content: '👍這個就是看到虎牙網站有個聊天室做的',
+      isHidden: false,
+      time: '2026-06-06 16:27',
+    },
+  ]
 })
 
 const authorName = ref('')
@@ -17,40 +43,40 @@ const inputText = ref('')
 const messageListRef = ref<HTMLElement | null>(null)
 const isSending = ref(false)
 
-const revealedIds = ref<Set<string>>(new Set())
-const hideLoading = ref<string | null>(null)
-const unhideLoading = ref<string | null>(null)
+// const revealedIds = ref<Set<string>>(new Set())
+// const hideLoading = ref<string | null>(null)
+// const unhideLoading = ref<string | null>(null)
 
-const reveal = (id: string) => {
-  revealedIds.value = new Set([...revealedIds.value, id])
-}
+// const reveal = (id: string) => {
+//   revealedIds.value = new Set([...revealedIds.value, id])
+// }
 
-const hide = async (msg: Message) => {
-  if (!msg.id) return
-  hideLoading.value = msg.id
-  try {
-    await updateChatRecord(msg.id, { ...msg, isHidden: true })
-    await chatStore.fetchChatData()
-  } catch (error) {
-    console.error(error)
-  } finally {
-    hideLoading.value = null
-  }
-}
+// const hide = async (msg: Message) => {
+//   if (!msg.id) return
+//   hideLoading.value = msg.id
+//   try {
+//     await updateChatRecord(msg.id, { ...msg, isHidden: true })
+//     await chatStore.fetchChatData()
+//   } catch (error) {
+//     console.error(error)
+//   } finally {
+//     hideLoading.value = null
+//   }
+// }
 
-const unhide = async (msg: Message) => {
-  if (!msg.id) return
-  unhideLoading.value = msg.id
-  try {
-    await updateChatRecord(msg.id, { ...msg, isHidden: false })
-    await chatStore.fetchChatData()
-    revealedIds.value.delete(msg.id)
-  } catch (error) {
-    console.error(error)
-  } finally {
-    unhideLoading.value = null
-  }
-}
+// const unhide = async (msg: Message) => {
+//   if (!msg.id) return
+//   unhideLoading.value = msg.id
+//   try {
+//     await updateChatRecord(msg.id, { ...msg, isHidden: false })
+//     await chatStore.fetchChatData()
+//     revealedIds.value.delete(msg.id)
+//   } catch (error) {
+//     console.error(error)
+//   } finally {
+//     unhideLoading.value = null
+//   }
+// }
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -59,42 +85,42 @@ const scrollToBottom = async () => {
   }
 }
 
-const getTime = () => {
-  const now = new Date()
-  return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-}
+// const getTime = () => {
+//   const now = new Date()
+//   return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+// }
 
-const sendMessage = async () => {
-  const text = inputText.value.trim()
-  if (!text || isSending.value) return
+// const sendMessage = async () => {
+//   const text = inputText.value.trim()
+//   if (!text || isSending.value) return
 
-  isSending.value = true
-  inputText.value = ''
+//   isSending.value = true
+//   inputText.value = ''
 
-  try {
-    const message: Message = {
-      author: authorName.value,
-      content: text,
-      isHidden: false,
-      time: getTime(),
-    }
+//   try {
+//     const message: Message = {
+//       author: authorName.value,
+//       content: text,
+//       isHidden: false,
+//       time: getTime(),
+//     }
 
-    await createChatRecord(message)
-    chatStore.fetchChatData()
-  } catch (error) {
-    console.error(error)
-  }
+//     await createChatRecord(message)
+//     chatStore.fetchChatData()
+//   } catch (error) {
+//     console.error(error)
+//   }
 
-  await scrollToBottom()
-  isSending.value = false
-}
+//   await scrollToBottom()
+//   isSending.value = false
+// }
 
-const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
-    sendMessage()
-  }
-}
+// const handleKeydown = (e: KeyboardEvent) => {
+//   if (e.key === 'Enter' && !e.shiftKey) {
+//     e.preventDefault()
+//     sendMessage()
+//   }
+// }
 
 onMounted(async () => {
   await scrollToBottom()
@@ -133,22 +159,28 @@ onMounted(async () => {
               <div class="bubble">{{ msg.content }}</div>
             </div>
             <!-- 隱藏遮罩 -->
-            <div v-if="msg.isHidden && !revealedIds.has(msg.id ?? '')" class="hidden-mask">
+            <!-- <div v-if="msg.isHidden && !revealedIds.has(msg.id ?? '')" class="hidden-mask">
               <p class="mask-label">此訊息已隱藏</p>
               <div class="mask-actions">
-                <button class="mask-btn reveal-btn" @click="reveal(msg.id ?? '')">查看隱藏內容</button>
-                <button class="mask-btn unhide-btn" :disabled="unhideLoading === msg.id" @click="unhide(msg)">
+                <button class="mask-btn reveal-btn" @click="reveal(msg.id ?? '')">
+                  查看隱藏內容
+                </button>
+                <button
+                  class="mask-btn unhide-btn"
+                  :disabled="unhideLoading === msg.id"
+                  @click="unhide(msg)"
+                >
                   {{ unhideLoading === msg.id ? '處理中...' : '取消隱藏' }}
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
           <!-- 隱藏按鈕 -->
-          <div v-if="!msg.isHidden" class="hide-bar">
+          <!-- <div v-if="!msg.isHidden" class="hide-bar">
             <button class="hide-btn" :disabled="hideLoading === msg.id" @click="hide(msg)">
               {{ hideLoading === msg.id ? '...' : '隱藏' }}
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -166,12 +198,12 @@ onMounted(async () => {
         <div class="input-row">
           <textarea
             v-model="inputText"
+            :disabled="true"
             class="chat-input"
             placeholder="輸入留言... (Enter 送出，Shift+Enter 換行)"
             rows="1"
-            @keydown="handleKeydown"
           />
-          <button class="send-btn" :disabled="!inputText.trim() || isSending" @click="sendMessage">
+          <button class="send-btn" :disabled="true">
             <span v-if="isSending" class="btn-spinner" />
             <span v-else>↑</span>
           </button>

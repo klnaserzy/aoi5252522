@@ -1,5 +1,3 @@
-import request from '@/utils/mockRequest'
-
 export interface BaseRecord {
   id?: string
   page: string
@@ -41,35 +39,4 @@ export interface busStationsInfo extends BaseRecord {
   name: string
   buses: string
   guide: string
-}
-
-export const getRecords = () => {
-  return request({
-    url: '/AOI522',
-    method: 'get',
-  })
-}
-
-export const createRecord = (data: object) => {
-  return request({
-    url: '/AOI522',
-    method: 'post',
-    data,
-  })
-}
-
-export const updateRecord = (id: string, data: object) => {
-  return request({
-    url: `/AOI522/${id}`,
-    method: 'put',
-    data,
-  })
-}
-
-export const hideRecord = (id: string, updatedBy?: string) => {
-  return updateRecord(id, {
-    hidden: true,
-    updateTime: new Date().toISOString(),
-    updateBy: updatedBy,
-  })
 }

@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import AoiAvatar from '@/components/AoiAvatar.vue'
 import headerLinks from '@/constants/headerLinks'
-import { useMockApi } from '@/stores/exhibitionStore'
-import { useChatStore } from '@/stores/chatStore'
+// import { useMockApi } from '@/stores/exhibitionStore'
+// import { useChatStore } from '@/stores/chatStore'
 
-const mockApiStore = useMockApi()
-const chatStore = useChatStore()
+// const mockApiStore = useMockApi()
+// const chatStore = useChatStore()
 
 // 控制行動端選單開關狀態
 const isMenuOpen = ref(false)
 
-onMounted(() => {
-  Promise.all([mockApiStore.fetchData(), chatStore.fetchChatData()])
-})
+// onMounted(() => {
+//   Promise.all([mockApiStore.fetchData(), chatStore.fetchChatData()])
+// })
 </script>
 
 <template>

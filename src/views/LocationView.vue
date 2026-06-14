@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { mrtStationsInfo, busStationsInfo } from '@/utils/exhibitionApi'
-import { createRecord, updateRecord } from '@/utils/exhibitionApi'
+// import { createRecord, updateRecord } from '@/utils/exhibitionApi'
 import { useMockApi } from '../stores/exhibitionStore'
 
 const mockApiStore = useMockApi()
@@ -9,40 +9,40 @@ const mockApiStore = useMockApi()
 const createMrtLoading = ref(false)
 const createBusLoading = ref(false)
 
-const revealedIds = ref<Set<string>>(new Set())
-const hideLoading = ref<string | null>(null)
-const unhideLoading = ref<string | null>(null)
+// const revealedIds = ref<Set<string>>(new Set())
+// const hideLoading = ref<string | null>(null)
+// const unhideLoading = ref<string | null>(null)
 
-const reveal = (id: string) => {
-  revealedIds.value = new Set([...revealedIds.value, id])
-}
+// const reveal = (id: string) => {
+//   revealedIds.value = new Set([...revealedIds.value, id])
+// }
 
-const hide = async (item: mrtStationsInfo | busStationsInfo) => {
-  if (!item.id) return
-  hideLoading.value = item.id
-  try {
-    await updateRecord(item.id, { ...item, isHidden: true })
-    await mockApiStore.fetchData()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    hideLoading.value = null
-  }
-}
+// const hide = async (item: mrtStationsInfo | busStationsInfo) => {
+//   if (!item.id) return
+//   hideLoading.value = item.id
+//   try {
+//     await updateRecord(item.id, { ...item, isHidden: true })
+//     await mockApiStore.fetchData()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     hideLoading.value = null
+//   }
+// }
 
-const unhide = async (item: mrtStationsInfo | busStationsInfo) => {
-  if (!item.id) return
-  unhideLoading.value = item.id
-  try {
-    await updateRecord(item.id, { ...item, isHidden: false })
-    await mockApiStore.fetchData()
-    revealedIds.value.delete(item.id)
-  } catch (error) {
-    console.log(error)
-  } finally {
-    unhideLoading.value = null
-  }
-}
+// const unhide = async (item: mrtStationsInfo | busStationsInfo) => {
+//   if (!item.id) return
+//   unhideLoading.value = item.id
+//   try {
+//     await updateRecord(item.id, { ...item, isHidden: false })
+//     await mockApiStore.fetchData()
+//     revealedIds.value.delete(item.id)
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     unhideLoading.value = null
+//   }
+// }
 
 // 實體展出資訊
 const venue = ref({
@@ -78,21 +78,21 @@ const cancelMrt = () => {
     isHidden: false,
   }
 }
-const confirmMrt = async () => {
-  createMrtLoading.value = true
-  try {
-    const now = new Date()
-    newMrt.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+// const confirmMrt = async () => {
+//   createMrtLoading.value = true
+//   try {
+//     const now = new Date()
+//     newMrt.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
 
-    await createRecord(newMrt.value)
-    mockApiStore.fetchData()
-    cancelMrt()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    createMrtLoading.value = false
-  }
-}
+//     await createRecord(newMrt.value)
+//     mockApiStore.fetchData()
+//     cancelMrt()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     createMrtLoading.value = false
+//   }
+// }
 
 const showAddBus = ref(false)
 const newBus = ref<busStationsInfo>({
@@ -115,22 +115,22 @@ const cancelBus = () => {
   }
 }
 
-const confirmBus = async () => {
-  createBusLoading.value = true
-  try {
-    const now = new Date()
+// const confirmBus = async () => {
+//   createBusLoading.value = true
+//   try {
+//     const now = new Date()
 
-    newBus.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
+//     newBus.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
 
-    await createRecord(newBus.value)
-    mockApiStore.fetchData()
-    cancelBus()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    createBusLoading.value = false
-  }
-}
+//     await createRecord(newBus.value)
+//     mockApiStore.fetchData()
+//     cancelBus()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     createBusLoading.value = false
+//   }
+// }
 
 // 附近公車站台資訊
 const busStations = computed(() => {
@@ -192,13 +192,13 @@ const busStations = computed(() => {
             <p class="distance-text">⏳ {{ mrt.distance }}</p>
             <p class="guide-text">{{ mrt.guide }}</p>
             <!-- 隱藏按鈕 -->
-            <div v-if="!mrt.isHidden" class="hide-bar">
+            <!-- <div v-if="!mrt.isHidden" class="hide-bar">
               <button class="hide-btn" :disabled="hideLoading === mrt.id" @click="hide(mrt)">
                 {{ hideLoading === mrt.id ? '處理中...' : '內容有誤隱藏此站台' }}
               </button>
-            </div>
+            </div> -->
             <!-- 隱藏遮罩 -->
-            <div v-if="mrt.isHidden && !revealedIds.has(mrt.id ?? '')" class="hidden-mask">
+            <!-- <div v-if="mrt.isHidden && !revealedIds.has(mrt.id ?? '')" class="hidden-mask">
               <p class="mask-label">此資訊有誤，已進行隱藏</p>
               <div class="mask-actions">
                 <button class="mask-btn reveal-btn" @click="reveal(mrt.id ?? '')">
@@ -212,13 +212,13 @@ const busStations = computed(() => {
                   {{ unhideLoading === mrt.id ? '處理中...' : '取消隱藏' }}
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <!-- 新增捷運指引 -->
           <div class="add-station-area">
             <button v-if="!showAddMrt" class="add-station-btn" @click="showAddMrt = true">
-              ＋ 新增捷運站台
+              ＋ 新增捷運站台 ( 功能已關閉 )
             </button>
             <div v-else class="add-station-form">
               <input v-model="newMrt.name" class="s-input" placeholder="站名（含出口）*" />
@@ -234,7 +234,7 @@ const busStations = computed(() => {
                 <button class="s-cancel" :disabled="createMrtLoading" @click="cancelMrt">
                   取消
                 </button>
-                <button class="s-confirm" :disabled="createMrtLoading" @click="confirmMrt">
+                <button class="s-confirm" :disabled="true">
                   <span v-if="createMrtLoading" class="btn-spinner" />
                   {{ createMrtLoading ? '新增中...' : '新增' }}
                 </button>
@@ -253,13 +253,13 @@ const busStations = computed(() => {
             <p class="bus-lines"><strong>停靠線路：</strong>{{ bus.buses }}</p>
             <p class="guide-text">{{ bus.guide }}</p>
             <!-- 隱藏按鈕 -->
-            <div v-if="!bus.isHidden" class="hide-bar">
+            <!-- <div v-if="!bus.isHidden" class="hide-bar">
               <button class="hide-btn" :disabled="hideLoading === bus.id" @click="hide(bus)">
                 {{ hideLoading === bus.id ? '處理中...' : '內容有誤隱藏此站台' }}
               </button>
-            </div>
+            </div> -->
             <!-- 隱藏遮罩 -->
-            <div v-if="bus.isHidden && !revealedIds.has(bus.id ?? '')" class="hidden-mask">
+            <!-- <div v-if="bus.isHidden && !revealedIds.has(bus.id ?? '')" class="hidden-mask">
               <p class="mask-label">此資訊有誤，已進行隱藏</p>
               <div class="mask-actions">
                 <button class="mask-btn reveal-btn" @click="reveal(bus.id ?? '')">
@@ -273,13 +273,13 @@ const busStations = computed(() => {
                   {{ unhideLoading === bus.id ? '處理中...' : '取消隱藏' }}
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <!-- 新增公車指引 -->
           <div class="add-station-area">
             <button v-if="!showAddBus" class="add-station-btn" @click="showAddBus = true">
-              ＋ 新增公車站台
+              ＋ 新增公車站台 ( 功能已關閉 )
             </button>
             <div v-else class="add-station-form">
               <input v-model="newBus.name" class="s-input" placeholder="站名 *" />
@@ -294,7 +294,7 @@ const busStations = computed(() => {
                 <button class="s-cancel" :disabled="createBusLoading" @click="cancelBus">
                   取消
                 </button>
-                <button class="s-confirm" :disabled="createBusLoading" @click="confirmBus">
+                <button class="s-confirm" :disabled="true">
                   <span v-if="createBusLoading" class="btn-spinner" />
                   {{ createBusLoading ? '新增中...' : '新增' }}
                 </button>
@@ -310,7 +310,7 @@ const busStations = computed(() => {
       <h4>🩺 患者入院小叮嚀</h4>
       <ul>
         <li>因實體展場空間有限，若現場人潮眾多，將啟動容留人數管制，請依循工作人員引導排隊。</li>
-        <li>展場內局部區域開放拍照，部分珍貴原畫展件禁止攝影，觀展時請注意牆面標示。</li>
+        <li>展場內局部區域開放拍照，部分珍貴原畫展件請多多攝影，觀展時請注意牆面標示。</li>
         <li>會場周邊機車停車格較少，建議多加利用上述<strong>捷運大眾運輸工具</strong>前來。</li>
       </ul>
     </div>

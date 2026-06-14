@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useMockApi } from '../stores/exhibitionStore'
-import { createRecord, updateRecord } from '@/utils/exhibitionApi'
+// import { createRecord, updateRecord } from '@/utils/exhibitionApi'
 import type { TweetCard } from '@/utils/exhibitionApi'
 
 const mockApiStore = useMockApi()
@@ -19,40 +19,40 @@ const filteredItems = computed(() => {
   return tweetCard.value.filter((i) => i.type === 'other')
 })
 
-const revealedIds = ref<Set<string>>(new Set())
-const unhideLoading = ref<string | null>(null)
-const hideLoading = ref<string | null>(null)
+// const revealedIds = ref<Set<string>>(new Set())
+// const unhideLoading = ref<string | null>(null)
+// const hideLoading = ref<string | null>(null)
 
-const reveal = (id: string) => {
-  revealedIds.value = new Set([...revealedIds.value, id])
-}
+// const reveal = (id: string) => {
+//   revealedIds.value = new Set([...revealedIds.value, id])
+// }
 
-const hide = async (item: TweetCard) => {
-  if (!item.id) return
-  hideLoading.value = item.id
-  try {
-    await updateRecord(item.id, { ...item, isHidden: true })
-    await mockApiStore.fetchData()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    hideLoading.value = null
-  }
-}
+// const hide = async (item: TweetCard) => {
+//   if (!item.id) return
+//   hideLoading.value = item.id
+//   try {
+//     await updateRecord(item.id, { ...item, isHidden: true })
+//     await mockApiStore.fetchData()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     hideLoading.value = null
+//   }
+// }
 
-const unhide = async (item: TweetCard) => {
-  if (!item.id) return
-  unhideLoading.value = item.id
-  try {
-    await updateRecord(item.id, { ...item, isHidden: false })
-    await mockApiStore.fetchData()
-    revealedIds.value.delete(item.id)
-  } catch (error) {
-    console.log(error)
-  } finally {
-    unhideLoading.value = null
-  }
-}
+// const unhide = async (item: TweetCard) => {
+//   if (!item.id) return
+//   unhideLoading.value = item.id
+//   try {
+//     await updateRecord(item.id, { ...item, isHidden: false })
+//     await mockApiStore.fetchData()
+//     revealedIds.value.delete(item.id)
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     unhideLoading.value = null
+//   }
+// }
 
 const showModal = ref(false)
 
@@ -92,27 +92,27 @@ const clearForm = () => {
   }
 }
 
-const addTweet = async () => {
-  createRecordLoading.value = true
-  try {
-    const now = new Date() // 取得當前台北時間
+// const addTweet = async () => {
+//   createRecordLoading.value = true
+//   try {
+//     const now = new Date() // 取得當前台北時間
 
-    const hours = now.getHours() // 取得小時 (0 ~ 23)
-    const minutes = now.getMinutes() // 取得分鐘 (0 ~ 59)
-    const seconds = now.getSeconds() // 取得秒數 (0 ~ 59)
+//     const hours = now.getHours() // 取得小時 (0 ~ 23)
+//     const minutes = now.getMinutes() // 取得分鐘 (0 ~ 59)
+//     const seconds = now.getSeconds() // 取得秒數 (0 ~ 59)
 
-    newTweet.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+//     newTweet.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 
-    await createRecord(newTweet.value)
-    mockApiStore.fetchData()
-    closeModal()
-    clearForm()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    createRecordLoading.value = false
-  }
-}
+//     await createRecord(newTweet.value)
+//     mockApiStore.fetchData()
+//     closeModal()
+//     clearForm()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     createRecordLoading.value = false
+//   }
+// }
 </script>
 
 <template>
@@ -137,7 +137,7 @@ const addTweet = async () => {
 
     <!-- 新增貼文 右側按鈕 -->
     <div class="add-tweet-area">
-      <span class="add-tweet-btn" @click="openModal">新增貼文<span>+</span></span>
+      <span class="add-tweet-btn" @click="openModal">新增貼文<span>+</span> ( 功能已關閉 )</span>
     </div>
 
     <!--  tweetCard: 推文展廳 -->
@@ -164,14 +164,14 @@ const addTweet = async () => {
           </div>
         </a>
         <!-- 隱藏 -->
-        <div v-if="!item.isHidden" class="hide-bar">
+        <!-- <div v-if="!item.isHidden" class="hide-bar">
           <button class="hide-btn" :disabled="hideLoading === item.id" @click.prevent="hide(item)">
             {{ hideLoading === item.id ? '處理中...' : '內容有誤隱藏此貼文' }}
           </button>
-        </div>
+        </div> -->
 
         <!-- 隱藏遮罩 -->
-        <div v-if="item.isHidden && !revealedIds.has(item.id ?? '')" class="hidden-mask">
+        <!-- <div v-if="item.isHidden && !revealedIds.has(item.id ?? '')" class="hidden-mask">
           <p class="mask-label">此資訊有誤，已進行隱藏</p>
           <div class="mask-actions">
             <button class="mask-btn reveal-btn" @click.prevent="reveal(item.id ?? '')">
@@ -185,13 +185,13 @@ const addTweet = async () => {
               {{ unhideLoading === item.id ? '處理中...' : '取消隱藏' }}
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
       <!-- 推文新增 -->
       <div class="art-frame add-frame" @click="openModal">
         <div class="add-inner">
           <span class="add-icon">＋</span>
-          <span class="add-label">新增推文</span>
+          <span class="add-label">新增推文 ( 功能已關閉 )</span>
         </div>
       </div>
     </div>
@@ -199,7 +199,7 @@ const addTweet = async () => {
     <Teleport to="body">
       <div v-show="showModal" class="modal-overlay" @click.self="closeModal">
         <div class="modal">
-          <h2>新增推文</h2>
+          <h2>新增推文 ( 功能已關閉 )</h2>
           <div class="form-group">
             <label>推文 URL</label>
             <input v-model="newTweet.url" placeholder="https://x.com/..." />
@@ -240,7 +240,7 @@ const addTweet = async () => {
           <div class="modal-actions">
             <button class="btn-clear" @click="clearForm">清除</button>
             <button class="btn-cancel" @click="closeModal">取消</button>
-            <button class="btn-confirm" :disabled="createRecordLoading" @click="addTweet">
+            <button class="btn-confirm" :disabled="true">
               <span v-if="createRecordLoading" class="btn-spinner" />
               {{ createRecordLoading ? '新增中...' : '新增' }}
             </button>

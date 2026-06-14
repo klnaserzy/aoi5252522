@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { TimelineEvent } from '@/utils/exhibitionApi'
-import { createRecord, updateRecord } from '@/utils/exhibitionApi'
 import { useMockApi } from '../stores/exhibitionStore'
 
 type Year = '2021' | '2022' | '2023' | '2024' | '2025' | '2026'
@@ -54,42 +53,42 @@ const timelineInteracts = ref<TimelineInteract[]>([
 
 const mockApiStore = useMockApi()
 
-const createEventLoading = ref(false)
+// const createEventLoading = ref(false)
 
-const revealedIds = ref<Set<string>>(new Set())
-const hideLoading = ref<string | null>(null)
-const unhideLoading = ref<string | null>(null)
+// const revealedIds = ref<Set<string>>(new Set())
+// const hideLoading = ref<string | null>(null)
+// const unhideLoading = ref<string | null>(null)
 
-const reveal = (id: string) => {
-  revealedIds.value = new Set([...revealedIds.value, id])
-}
+// const reveal = (id: string) => {
+//   revealedIds.value = new Set([...revealedIds.value, id])
+// }
 
-const hide = async (event: TimelineEvent) => {
-  if (!event.id) return
-  hideLoading.value = event.id
-  try {
-    await updateRecord(event.id, { ...event, isHidden: true })
-    await mockApiStore.fetchData()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    hideLoading.value = null
-  }
-}
+// const hide = async (event: TimelineEvent) => {
+//   if (!event.id) return
+//   hideLoading.value = event.id
+//   try {
+//     await updateRecord(event.id, { ...event, isHidden: true })
+//     await mockApiStore.fetchData()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     hideLoading.value = null
+//   }
+// }
 
-const unhide = async (event: TimelineEvent) => {
-  if (!event.id) return
-  unhideLoading.value = event.id
-  try {
-    await updateRecord(event.id, { ...event, isHidden: false })
-    await mockApiStore.fetchData()
-    revealedIds.value.delete(event.id)
-  } catch (error) {
-    console.log(error)
-  } finally {
-    unhideLoading.value = null
-  }
-}
+// const unhide = async (event: TimelineEvent) => {
+//   if (!event.id) return
+//   unhideLoading.value = event.id
+//   try {
+//     await updateRecord(event.id, { ...event, isHidden: false })
+//     await mockApiStore.fetchData()
+//     revealedIds.value.delete(event.id)
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     unhideLoading.value = null
+//   }
+// }
 
 const events = computed(() => {
   return mockApiStore.timelineEvent
@@ -182,38 +181,38 @@ watch(activeIndex, () => {
 
 const cancelAddEvent = () => {
   showAddForm.value = false
-  newEvent.value = {
-    page: 'timeline',
-    position: 'event',
-    year: activeIndex.value,
-    title: '',
-    subtitle: '',
-    content: '',
-    isHidden: false,
-  }
+  // newEvent.value = {
+  //   page: 'timeline',
+  //   position: 'event',
+  //   year: activeIndex.value,
+  //   title: '',
+  //   subtitle: '',
+  //   content: '',
+  //   isHidden: false,
+  // }
 }
 
-const confirmAddEvent = async () => {
-  createEventLoading.value = true
-  try {
-    const now = new Date() // 取得當前台北時間
+// const confirmAddEvent = async () => {
+//   createEventLoading.value = true
+//   try {
+//     const now = new Date() // 取得當前台北時間
 
-    const hours = now.getHours() // 取得小時 (0 ~ 23)
-    const minutes = now.getMinutes() // 取得分鐘 (0 ~ 59)
-    const seconds = now.getSeconds() // 取得秒數 (0 ~ 59)
+//     const hours = now.getHours() // 取得小時 (0 ~ 23)
+//     const minutes = now.getMinutes() // 取得分鐘 (0 ~ 59)
+//     const seconds = now.getSeconds() // 取得秒數 (0 ~ 59)
 
-    newEvent.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+//     newEvent.value.updateTime = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 
-    await createRecord(newEvent.value)
-    showAddForm.value = false
-    cancelAddEvent()
-    mockApiStore.fetchData()
-  } catch (error) {
-    console.log(error)
-  } finally {
-    createEventLoading.value = false
-  }
-}
+//     await createRecord(newEvent.value)
+//     showAddForm.value = false
+//     cancelAddEvent()
+//     mockApiStore.fetchData()
+//   } catch (error) {
+//     console.log(error)
+//   } finally {
+//     createEventLoading.value = false
+//   }
+// }
 </script>
 
 <template>
@@ -258,15 +257,15 @@ const confirmAddEvent = async () => {
               <h4 class="event-subtitle">{{ event.subtitle }}</h4>
               <p class="event-content">{{ event.content }}</p>
               <!-- 隱藏按鈕 -->
-              <div v-if="!event.isHidden && !revealedIds.has(event.id ?? '')" class="hide-bar">
+              <!-- <div v-if="!event.isHidden && !revealedIds.has(event.id ?? '')" class="hide-bar">
                 <button class="hide-btn" :disabled="hideLoading === event.id" @click="hide(event)">
                   {{ hideLoading === event.id ? '處理中...' : '內容有誤隱藏此事件' }}
                 </button>
-              </div>
+              </div> -->
             </div>
 
             <!-- 隱藏遮罩 -->
-            <div v-if="event.isHidden && !revealedIds.has(event.id ?? '')" class="hidden-mask">
+            <!-- <div v-if="event.isHidden && !revealedIds.has(event.id ?? '')" class="hidden-mask">
               <p class="mask-label">此資訊有誤，已進行隱藏</p>
               <div class="mask-actions">
                 <button class="mask-btn reveal-btn" @click="reveal(event.id ?? '')">
@@ -280,14 +279,14 @@ const confirmAddEvent = async () => {
                   {{ unhideLoading === event.id ? '處理中...' : '取消隱藏' }}
                 </button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
         <!-- 新增事件 -->
         <div class="add-event-area">
           <button v-if="!showAddForm" class="add-event-btn" @click="showAddForm = true">
-            ＋ 新增事件
+            ＋ 新增事件 ( 功能已關閉 )
           </button>
           <div v-else class="add-event-form">
             <input v-model="newEvent.title" class="add-input" placeholder="事件標題 *" />
@@ -299,12 +298,10 @@ const confirmAddEvent = async () => {
               placeholder="詳細敘述..."
             />
             <div class="add-form-actions">
-              <button class="add-cancel" :disabled="createEventLoading" @click="cancelAddEvent">
-                取消
-              </button>
-              <button class="add-confirm" :disabled="createEventLoading" @click="confirmAddEvent">
-                <span v-if="createEventLoading" class="btn-spinner" />
-                {{ createEventLoading ? '新增中...' : '新增' }}
+              <button class="add-cancel" @click="cancelAddEvent">取消</button>
+              <button class="add-confirm" :disabled="true">
+                <!-- <span class="btn-spinner" /> -->
+                新增
               </button>
             </div>
           </div>
